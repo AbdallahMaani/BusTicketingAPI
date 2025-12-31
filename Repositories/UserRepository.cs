@@ -1,39 +1,42 @@
 ﻿using Bus_ticketing_Backend.IRepositories;
-using Bus_ticketing_Backend.Models;
-using Bus_ticketingAPI.Models;
+using Bus_ticketing_Backend.Data;
+using Bus_ticketingAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bus_ticketing_Backend.Repositories
-{ // this repository handles all database operations related to User entity
-    public class UserRepository : IUserRepository // Implementing the IUserRepository interface
+{
+    public class UserRepository : IUserRepository
     {
-        private readonly AppDbContext _context; // Dependency injection of the AppDbContext _context is an instance of the Db context
-        public UserRepository(AppDbContext context) => _context = context; // Constructor to initialize the context
+        private readonly AppDbContext _context;
+        public UserRepository(AppDbContext context) => _context = context;
 
-        public async Task<User> GetUserByIdAsync(Guid userId) => 
-            await _context.Users.FindAsync(userId); // FindAsync is used for primary key lookups it's a predefined method in EF Core
+        public async Task<User?> GetUserByIdAsync(Guid userId) =>
+            await _context.Users.FindAsync(userId);
+
+        public async Task<User?> GetByUsernameAsync(string username) =>
+            await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
         public async Task<IEnumerable<User>> GetAllUsersAsync() =>
-            await _context.Users.ToListAsync(); // ToListAsync is a predefined method in EF Core to asynchronously get all records as a list
+            await _context.Users.ToListAsync();
 
         public async Task AddUserAsync(User user)
         {
-            await _context.Users.AddAsync(user); // AddAsync is a predefined method in EF Core to asynchronously add a new entity
-            await _context.SaveChangesAsync(); // SaveChangesAsync is a predefined method in EF Core to asynchronously save changes to the database
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            _context.Users.Update(user); // Update is a predefined method in EF Core to update an existing entity
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteUserAsync(Guid userId)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await GetUserByIdAsync(userId);
             if (user != null)
             {
-                _context.Users.Remove(user); // Remove is a predefined method in EF Core to delete an entity
+                _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
         }

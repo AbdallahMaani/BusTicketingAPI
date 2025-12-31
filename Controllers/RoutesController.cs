@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
-using Bus_ticketingAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bus_ticketing_Backend.Controllers

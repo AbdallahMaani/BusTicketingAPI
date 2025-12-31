@@ -6,6 +6,7 @@ C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debu
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\Bus_ticketing_Backend.csproj.CoreCompileInputs.cache
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\Bus_ticketing_Backend.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\Bus_ticketing_Backend.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\Bus_ticketing_Backend.sourcelink.json
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\appsettings.Development.json
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\appsettings.json
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Bus_ticketing_Backend.staticwebassets.endpoints.json
@@ -15,7 +16,7 @@ C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debu
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Bus_ticketing_Backend.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Bus_ticketing_Backend.pdb
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Humanizer.dll
-C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.Build.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.Build.Framework.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.Build.Tasks.Core.dll
@@ -31,12 +32,21 @@ C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debu
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.NET.StringTools.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.OpenApi.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Mono.TextTemplating.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Newtonsoft.Json.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Npgsql.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.CodeDom.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Composition.AttributedModel.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Composition.Convention.dll
@@ -45,6 +55,7 @@ C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debu
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Composition.TypedParts.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Configuration.ConfigurationManager.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Formats.Nrbf.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Reflection.MetadataLoadContext.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Resources.Extensions.dll
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\System.Security.Cryptography.ProtectedData.dll
@@ -132,6 +143,4 @@ C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debu
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\Bus_ticketing_Backend.pdb
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\Bus_ticketing_Backend.genruntimeconfig.cache
 C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\obj\Debug\net10.0\ref\Bus_ticketing_Backend.dll
-C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\abdal\source\repos\Bus_ticketing_Backend\Bus_ticketing_Backend\bin\Debug\net10.0\Microsoft.Bcl.TimeProvider.dll

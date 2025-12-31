@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Bus_ticketingAPI.Models
+namespace Bus_ticketingAPI.Entities
 {
     public class Bus
     {

@@ -1,4 +1,4 @@
-﻿using Bus_ticketingAPI.Models;
+﻿using Bus_ticketingAPI.Entities;
 
 namespace Bus_ticketing_Backend.IRepositories
 {

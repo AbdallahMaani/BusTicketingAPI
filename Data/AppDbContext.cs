@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Bus_ticketingAPI.Models;
+using Bus_ticketingAPI.Entities;
 
-namespace Bus_ticketing_Backend.Models
+namespace Bus_ticketing_Backend.Data
 {
     public class AppDbContext : DbContext
     {

@@ -1,6 +1,6 @@
 ﻿using Bus_ticketing_Backend.IRepositories;
-using Bus_ticketing_Backend.Models;
-using Bus_ticketingAPI.Models;
+using Bus_ticketing_Backend.Data;
+using Bus_ticketingAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bus_ticketing_Backend.Repositories

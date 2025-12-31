@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Bus_ticketingAPI.Models
+namespace Bus_ticketingAPI.Entities
 {
     public class Booking
     {
