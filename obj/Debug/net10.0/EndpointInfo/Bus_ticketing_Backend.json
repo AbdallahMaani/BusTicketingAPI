@@ -67,7 +67,24 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
           }
         }
       }
@@ -165,6 +182,18 @@
               "format": "uuid"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Booking/my-bookings": {
+      "get": {
+        "tags": [
+          "Booking"
         ],
         "responses": {
           "200": {
@@ -1142,6 +1171,50 @@
   },
   "components": {
     "schemas": {
+      "Booking": {
+        "required": [
+          "tripId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "tripId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          },
+          "bookingDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookingStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "priceTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "BookingDto": {
         "type": "object",
         "properties": {
@@ -1157,17 +1230,65 @@
             "type": "string",
             "format": "uuid"
           },
+          "trip": {
+            "$ref": "#/components/schemas/TripDto"
+          },
+          "bus": {
+            "$ref": "#/components/schemas/BusDto"
+          },
           "bookingDate": {
             "type": "string",
             "format": "date-time"
           },
-          "status": {
+          "bookingStatus": {
             "type": "string",
             "nullable": true
           },
-          "pricePaid": {
+          "priceTotal": {
             "type": "number",
             "format": "double"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Bus": {
+        "type": "object",
+        "properties": {
+          "busId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operator": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "capacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "driverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "features": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1258,13 +1379,15 @@
             "type": "string",
             "format": "date-time"
           },
-          "pricePaid": {
-            "type": "number",
-            "format": "double"
-          },
-          "status": {
+          "bookingStatus": {
             "type": "string",
             "nullable": true
+          },
+          "quantity": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1463,6 +1586,42 @@
         },
         "additionalProperties": false
       },
+      "Routes": {
+        "required": [
+          "destinationId",
+          "originId"
+        ],
+        "type": "object",
+        "properties": {
+          "routeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/City"
+          },
+          "destinationId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/City"
+          },
+          "distanceKm": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationHrs": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "Station": {
         "required": [
           "cityId"
@@ -1555,6 +1714,54 @@
         },
         "additionalProperties": false
       },
+      "Trip": {
+        "required": [
+          "busId",
+          "routeId"
+        ],
+        "type": "object",
+        "properties": {
+          "tripId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "routeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "route": {
+            "$ref": "#/components/schemas/Routes"
+          },
+          "busId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bus": {
+            "$ref": "#/components/schemas/Bus"
+          },
+          "departureDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "departureTime": {
+            "type": "string",
+            "format": "time"
+          },
+          "availableSeats": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "priceJod": {
+            "type": "number",
+            "format": "double"
+          },
+          "tripStatus": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TripDto": {
         "type": "object",
         "properties": {
@@ -1596,9 +1803,17 @@
       "UpdateBookingDto": {
         "type": "object",
         "properties": {
-          "status": {
+          "bookingStatus": {
             "type": "string",
             "nullable": true
+          },
+          "priceTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1706,8 +1921,63 @@
             "type": "string",
             "nullable": true
           },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
           "phone": {
             "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "balance": {
+            "type": "number",
+            "format": "double"
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshTokenExpiryTime": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

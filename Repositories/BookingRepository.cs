@@ -15,7 +15,6 @@ namespace Bus_ticketing_Backend.Repositories
 
         public async Task<IEnumerable<Booking>> GetAllBookingsAsync() =>
             await _context.Bookings.ToListAsync();
-
         public async Task AddBookingAsync(Booking booking)
         {
             await _context.Bookings.AddAsync(booking);
@@ -31,8 +30,9 @@ namespace Bus_ticketing_Backend.Repositories
                 return;
 
             // تحديث الحقول المسموح تعديلها فقط
-            existingBooking.Status = booking.Status;
-            existingBooking.PricePaid = booking.PricePaid;
+            existingBooking.bookingStatus = booking.bookingStatus;
+            existingBooking.PriceTotal = booking.PriceTotal;
+            existingBooking.Quantity = booking.Quantity;
 
             await _context.SaveChangesAsync();
         }

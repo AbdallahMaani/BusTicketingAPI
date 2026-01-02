@@ -1,7 +1,9 @@
 ﻿using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketing_Backend.Services;
+using Bus_ticketingAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bus_ticketing_Backend.Controllers
@@ -11,10 +13,10 @@ namespace Bus_ticketing_Backend.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repository;
-        private readonly AuthService _authService; // Inject Service
+        private readonly IAuthService _authService; // Inject Service
 
         // Fix Constructor: Inject BOTH Repo and Service
-        public UserController(IUserRepository repository, AuthService authService)
+        public UserController(IUserRepository repository, IAuthService authService)
         {
             _repository = repository;
             _authService = authService;
@@ -87,6 +89,17 @@ namespace Bus_ticketing_Backend.Controllers
             await _repository.DeleteUserAsync(id);
             return NoContent();
         }
+
+        /*[Authorize]
+        [HttpPost("topup")]
+        public async Task<IActionResult> TopUp([FromBody] decimal amount)
+        {
+            if (amount <= 0) return BadRequest();
+            var user = await GetCurrentUser();
+            user.Balance += amount;
+            await _repository.UpdateUserAsync(user);
+            return Ok(user.Balance);
+        }*/
 
         // 1. REGISTER
         [HttpPost("register")]

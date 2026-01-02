@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Bus_ticketing_Backend.Services 
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _repo;
         private readonly IConfiguration _config;

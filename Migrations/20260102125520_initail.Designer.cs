@@ -3,6 +3,7 @@ using System;
 using Bus_ticketing_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bus_ticketing_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260102125520_initail")]
+    partial class initail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,11 +34,18 @@ namespace Bus_ticketing_Backend.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("BusId")
+                        .HasColumnType("uuid");
+
                     b.Property<decimal>("PriceTotal")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("TripId")
                         .HasColumnType("uuid");
@@ -43,10 +53,9 @@ namespace Bus_ticketing_Backend.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("bookingStatus")
-                        .HasColumnType("text");
-
                     b.HasKey("BookingId");
+
+                    b.HasIndex("BusId");
 
                     b.HasIndex("TripId");
 
@@ -336,7 +345,8 @@ namespace Bus_ticketing_Backend.Migrations
                     b.Property<Guid>("RouteId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("tripStatus")
+                    b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TripId");
@@ -357,7 +367,7 @@ namespace Bus_ticketing_Backend.Migrations
                             DepartureTime = new TimeSpan(0, 8, 30, 0, 0),
                             PriceJod = 2.50m,
                             RouteId = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            tripStatus = "Scheduled"
+                            Status = "Scheduled"
                         },
                         new
                         {
@@ -368,7 +378,7 @@ namespace Bus_ticketing_Backend.Migrations
                             DepartureTime = new TimeSpan(0, 14, 0, 0, 0),
                             PriceJod = 2.00m,
                             RouteId = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff"),
-                            tripStatus = "Scheduled"
+                            Status = "Scheduled"
                         });
                 });
 
@@ -418,6 +428,12 @@ namespace Bus_ticketing_Backend.Migrations
 
             modelBuilder.Entity("Bus_ticketingAPI.Entities.Booking", b =>
                 {
+                    b.HasOne("Bus_ticketingAPI.Entities.Bus", "Bus")
+                        .WithMany()
+                        .HasForeignKey("BusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Bus_ticketingAPI.Entities.Trip", "Trip")
                         .WithMany()
                         .HasForeignKey("TripId")
@@ -429,6 +445,8 @@ namespace Bus_ticketing_Backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Bus");
 
                     b.Navigation("Trip");
 

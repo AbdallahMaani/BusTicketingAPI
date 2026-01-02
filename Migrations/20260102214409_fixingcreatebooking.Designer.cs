@@ -3,6 +3,7 @@ using System;
 using Bus_ticketing_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bus_ticketing_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260102214409_fixingcreatebooking")]
+    partial class fixingcreatebooking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,6 +34,9 @@ namespace Bus_ticketing_Backend.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("BusId")
+                        .HasColumnType("uuid");
+
                     b.Property<decimal>("PriceTotal")
                         .HasColumnType("decimal(18,2)");
 
@@ -47,6 +53,8 @@ namespace Bus_ticketing_Backend.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("BookingId");
+
+                    b.HasIndex("BusId");
 
                     b.HasIndex("TripId");
 
@@ -418,6 +426,12 @@ namespace Bus_ticketing_Backend.Migrations
 
             modelBuilder.Entity("Bus_ticketingAPI.Entities.Booking", b =>
                 {
+                    b.HasOne("Bus_ticketingAPI.Entities.Bus", "Bus")
+                        .WithMany()
+                        .HasForeignKey("BusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Bus_ticketingAPI.Entities.Trip", "Trip")
                         .WithMany()
                         .HasForeignKey("TripId")
@@ -429,6 +443,8 @@ namespace Bus_ticketing_Backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Bus");
 
                     b.Navigation("Trip");
 

@@ -1,9 +1,12 @@
-﻿using Bus_ticketing_Backend.DTOs;
+﻿using Bus_ticketing_Backend.Data;
+using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketingAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Bus_ticketing_Backend.Controllers
 {
@@ -12,7 +15,11 @@ namespace Bus_ticketing_Backend.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IBookingRepository _repository;
-        public BookingController(IBookingRepository repository) => _repository = repository;
+        private readonly AppDbContext _context;
+        public BookingController(IBookingRepository repository, AppDbContext appDbContext) 
+        { _repository = repository;
+          _context = appDbContext;
+        }
 
         [Authorize]
         [HttpGet]
@@ -25,8 +32,9 @@ namespace Bus_ticketing_Backend.Controllers
                 UserId = b.UserId,
                 TripId = b.TripId,
                 BookingDate = b.BookingDate,
-                Status = b.Status,
-                PricePaid = b.PricePaid
+                bookingStatus = b.bookingStatus,
+                PriceTotal = b.PriceTotal,
+                Quantity = b.Quantity
             });
             return Ok(result);
         }
@@ -44,29 +52,91 @@ namespace Bus_ticketing_Backend.Controllers
                 UserId = item.UserId,
                 TripId = item.TripId,
                 BookingDate = item.BookingDate,
-                Status = item.Status,
-                PricePaid = item.PricePaid
+                bookingStatus = item.bookingStatus,
+                PriceTotal = item.PriceTotal,
+                Quantity = item.Quantity
             };
 
             return Ok(dto);
         }
 
+        // Add user-specific authorization checks:
+        [Authorize]
+        [HttpGet("my-bookings")]
+        public async Task<ActionResult> GetMyBookings()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var bookings = await _context.Bookings
+                .Where(b => b.UserId == Guid.Parse(userId))
+                .ToListAsync();
+            return Ok(bookings);
+        }
+
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreateBookingDto dto)
+        public async Task<ActionResult<Booking>> CreateBookingWithTransactionAsync([FromBody] CreateBookingDto dto)
         {
-            var booking = new Booking
-            {
-                UserId = dto.UserId,
-                TripId = dto.TripId,
-                BookingDate = dto.BookingDate,
-                PricePaid = dto.PricePaid,
-                Status = dto.Status
-            };
+            // Extract userId from JWT claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+                return Unauthorized("Invalid or missing user ID in token");
 
-            await _repository.AddBookingAsync(booking);
-            return CreatedAtAction(nameof(GetById), new { id = booking.BookingId }, null);
-            // this line returns 201 and location header the location header points to the newly created resource
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // Get trip with lock to prevent race conditions
+                var trip = await _context.Trips
+                    .Where(t => t.TripId == dto.TripId && t.tripStatus == "Scheduled")
+                    .FirstOrDefaultAsync();
+
+                if (dto.TripId == Guid.Empty)
+                    return BadRequest("Trip ID is required");
+
+                if (trip == null)
+                    return BadRequest("Trip not found or not available");
+
+                if (trip.AvailableSeats < dto.Quantity)
+                    return BadRequest("Not enough seats available");
+
+                // Check user balance
+                var user = await _context.Users.FindAsync(userId);
+                
+                if (user == null)
+                    return BadRequest("User not found");
+
+                var totalPrice = trip.PriceJod * dto.Quantity;
+
+                if (user.Balance < totalPrice)
+                    return BadRequest("Insufficient balance");
+
+                // Create booking
+                var booking = new Booking
+                {
+                    UserId = userId,
+                    TripId = dto.TripId,
+                    BookingDate = DateTime.UtcNow,
+                    bookingStatus = "Confirmed",
+                    PriceTotal = totalPrice,
+                    Quantity = dto.Quantity,
+                };
+
+                // Update trip seats
+                trip.AvailableSeats -= dto.Quantity;
+
+                // Deduct from user balance
+                user.Balance -= totalPrice;
+
+                await _context.Bookings.AddAsync(booking);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(booking);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         [Authorize]
@@ -76,7 +146,7 @@ namespace Bus_ticketing_Backend.Controllers
             var existing = await _repository.GetBookingByIdAsync(id);
             if (existing == null) return NotFound();
 
-            existing.Status = dto.Status ?? existing.Status; // ?? means if dto.Status is null, keep existing.Status 
+            existing.bookingStatus = dto.bookingStatus ?? existing.bookingStatus; // ?? means if dto.Status is null, keep existing.Status 
 
             await _repository.UpdateBookingAsync(existing);
             return NoContent();

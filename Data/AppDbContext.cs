@@ -7,10 +7,8 @@ namespace Bus_ticketing_Backend.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-        }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Booking> Bookings { get; set; }
@@ -53,7 +51,7 @@ namespace Bus_ticketing_Backend.Data
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.HasKey(e => e.BookingId);
-                entity.Property(e => e.PricePaid).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.PriceTotal).HasColumnType("decimal(18,2)");
                 // Ensure DateTime is handled correctly for PostgreSQL
                 entity.Property(e => e.BookingDate).HasColumnType("timestamp with time zone");
             });
@@ -109,8 +107,8 @@ namespace Bus_ticketing_Backend.Data
             );
 
             modelBuilder.Entity<Trip>().HasData(
-                new Trip { TripId = trip1Id, RouteId = route1Id, BusId = bus1Id, DepartureDate = new DateOnly(2025, 12, 30), DepartureTime = new TimeOnly(08, 30), AvailableSeats = 45, PriceJod = 2.50m, Status = "Scheduled" },
-                new Trip { TripId = trip2Id, RouteId = route2Id, BusId = bus2Id, DepartureDate = new DateOnly(2025, 12, 30), DepartureTime = new TimeOnly(14, 00), AvailableSeats = 50, PriceJod = 2.00m, Status = "Scheduled" }
+                new Trip { TripId = trip1Id, RouteId = route1Id, BusId = bus1Id, DepartureDate = new DateOnly(2025, 12, 30), DepartureTime = new TimeOnly(08, 30), AvailableSeats = 45, PriceJod = 2.50m, tripStatus = "Scheduled" },
+                new Trip { TripId = trip2Id, RouteId = route2Id, BusId = bus2Id, DepartureDate = new DateOnly(2025, 12, 30), DepartureTime = new TimeOnly(14, 00), AvailableSeats = 50, PriceJod = 2.00m, tripStatus = "Scheduled" }
             );
 
             

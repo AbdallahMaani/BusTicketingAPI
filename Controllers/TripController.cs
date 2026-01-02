@@ -27,7 +27,7 @@ namespace Bus_ticketing_Backend.Controllers
                 DepartureTime = t.DepartureTime,
                 AvailableSeats = t.AvailableSeats,
                 PriceJod = t.PriceJod,
-                Status = t.Status
+                Status = t.tripStatus
             });
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace Bus_ticketing_Backend.Controllers
                 DepartureTime = item.DepartureTime,
                 AvailableSeats = item.AvailableSeats,
                 PriceJod = item.PriceJod,
-                Status = item.Status
+                Status = item.tripStatus
             };
 
             return Ok(dto);
@@ -65,7 +65,7 @@ namespace Bus_ticketing_Backend.Controllers
                 DepartureTime = dto.DepartureTime,
                 AvailableSeats = dto.AvailableSeats,
                 PriceJod = dto.PriceJod,
-                Status = dto.Status
+                tripStatus = dto.Status
             };
 
             await _repository.AddTripAsync(trip);
@@ -83,7 +83,7 @@ namespace Bus_ticketing_Backend.Controllers
             existing.DepartureTime = dto.DepartureTime != default ? dto.DepartureTime : existing.DepartureTime;
             existing.AvailableSeats = dto.AvailableSeats != 0 ? dto.AvailableSeats : existing.AvailableSeats;
             existing.PriceJod = dto.PriceJod != 0 ? dto.PriceJod : existing.PriceJod;
-            existing.Status = dto.Status ?? existing.Status;
+            existing.tripStatus = dto.Status ?? existing.tripStatus;
 
             await _repository.UpdateTripAsync(existing);
             return NoContent();
