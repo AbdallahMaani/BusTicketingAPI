@@ -19,9 +19,16 @@ namespace Bus_ticketingAPI.Entities
         public Trip Trip { get; set; }
 
         public DateTime BookingDate { get; set; }
+
+       // public DateTime DepartureTime  { get; set; }
+
         public string Status { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal PricePaid { get; set; }
+
+        //public decimal PriceTotal { get; set; }
+
+        //public int Quantity { get; set; }
     }
 }

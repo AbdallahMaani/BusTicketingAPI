@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using Bus_ticketing_Backend.DTOs;
+﻿using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketingAPI.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Bus_ticketing_Backend.Controllers
 {
@@ -13,6 +14,7 @@ namespace Bus_ticketing_Backend.Controllers
         private readonly IBookingRepository _repository;
         public BookingController(IBookingRepository repository) => _repository = repository;
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingDto>>> GetAll()
         {
@@ -29,6 +31,7 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<BookingDto>> GetById([FromRoute] Guid id)
         {
@@ -48,6 +51,7 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(dto);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateBookingDto dto)
         {
@@ -65,6 +69,7 @@ namespace Bus_ticketing_Backend.Controllers
             // this line returns 201 and location header the location header points to the newly created resource
         }
 
+        [Authorize]
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] UpdateBookingDto dto)
         {
@@ -77,6 +82,7 @@ namespace Bus_ticketing_Backend.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete([FromRoute] Guid id)
         {

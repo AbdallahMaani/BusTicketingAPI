@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using Bus_ticketing_Backend.DTOs;
+﻿using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketingAPI.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Bus_ticketing_Backend.Controllers
 {
@@ -52,6 +53,7 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(dto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateTripDto dto)
         {
@@ -70,6 +72,7 @@ namespace Bus_ticketing_Backend.Controllers
             return CreatedAtAction(nameof(GetById), new { id = trip.TripId }, null);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTripDto dto)
         {
@@ -86,6 +89,7 @@ namespace Bus_ticketing_Backend.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete([FromRoute] Guid id)
         {

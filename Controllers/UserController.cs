@@ -22,6 +22,7 @@ namespace Bus_ticketing_Backend.Controllers
 
         // ... GetAll, GetById, Update, Delete remain the same ...
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTOs>>> GetAll()
         {
@@ -42,6 +43,7 @@ namespace Bus_ticketing_Backend.Controllers
         }
 
         // GET: api/User/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<UserDTOs>> GetById([FromRoute] Guid id)
         {
@@ -61,6 +63,7 @@ namespace Bus_ticketing_Backend.Controllers
         }
 
         // PUT: api/User/{id}
+        [Authorize]
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Update([FromRoute] Guid id, UpdateUserDTO dto)
         {
@@ -77,6 +80,7 @@ namespace Bus_ticketing_Backend.Controllers
         }
 
         // DELETE: api/User/{id}
+        [Authorize]
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete([FromRoute] Guid id)
         {
