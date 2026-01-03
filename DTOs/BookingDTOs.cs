@@ -4,9 +4,9 @@ namespace Bus_ticketing_Backend.DTOs
 {
     public class BookingDto
     {
-        public Guid BookingId { get; set; }
+        public Guid BookingId { get; set; } 
         public Guid UserId { get; set; } 
-        public Guid TripId { get; set; }
+        public Guid TripId { get; set; } 
         public string OriginName { get; set; }
         public string DestinationName { get; set; }
         public string BusType { get; set; }

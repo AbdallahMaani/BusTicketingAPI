@@ -9,13 +9,13 @@ namespace Bus_ticketingAPI.Entities
         public Guid BookingId { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid UserId { get; set; }
         [ForeignKey("UserId")]
+        public Guid UserId { get; set; }
         public User User { get; set; }
 
         [Required]
-        public Guid TripId { get; set; }
         [ForeignKey("TripId")]
+        public Guid TripId { get; set; }
         public Trip Trip { get; set; }
 
         public DateTime BookingDate { get; set; }

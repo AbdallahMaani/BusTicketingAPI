@@ -18,7 +18,6 @@ namespace Bus_ticketing_Backend.Controllers
             _repository = repository;
         }
 
-        // Only Admins should see the entire database of bookings
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingDto>>> GetAll()
@@ -28,7 +27,6 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(dtos);
         }
 
-        // Standard users use this to see their own history
         [Authorize]
         [HttpGet("my-bookings")]
         public async Task<ActionResult<IEnumerable<BookingDto>>> GetMyBookings() // only current user and admin can see their bookings
@@ -41,7 +39,6 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(dtos);
         }
 
-        // Secured: Users can only see their own ID (or Admin)
         [Authorize]
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<BookingDto>> GetById([FromRoute] Guid id)
@@ -52,10 +49,9 @@ namespace Bus_ticketing_Backend.Controllers
             var userId = GetCurrentUserId();
             var isAdmin = User.IsInRole("Admin");
 
-            // Security Check
             if (!isAdmin && item.UserId != userId)
             {
-                return Forbid(); // Or NotFound() to ensure privacy
+                return Forbid(); 
             }
 
             return Ok(MapToDto(item));
@@ -86,7 +82,6 @@ namespace Bus_ticketing_Backend.Controllers
             }
         }
 
-        // Acts as "Cancel Booking" -> Refunds money, frees seat.
         [Authorize]
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> CancelBooking([FromRoute] Guid id)
@@ -98,8 +93,6 @@ namespace Bus_ticketing_Backend.Controllers
 
             if (!success)
             {
-                // We return BadRequest because the resource might exist, but cancellation failed 
-                // (e.g. already cancelled, or not owned by user)
                 return BadRequest("Unable to cancel booking. It may be already cancelled, or you do not have permission.");
             }
 

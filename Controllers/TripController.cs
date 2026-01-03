@@ -13,8 +13,6 @@ namespace Bus_ticketing_Backend.Controllers
         private readonly ITripRepository _repository;
         public TripController(ITripRepository repository) => _repository = repository;
 
-        // NEW: Search Endpoint (Public) - Search by City IDs and Date
-        // usage: api/trip/search?from=LOC_AMN&to=LOC_IRD&date=2025-12-31
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<TripDto>>> Search(
             [FromQuery] string from,
@@ -25,9 +23,6 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(items.Select(MapToDto));
         }
 
-        // NEW: Advanced Filter Endpoint (Public) - Filter by City Names, Bus Features, and Sort
-        // usage: api/trip/filters?originCityName=Amman&destinationCityName=Irbid&departureDate=2025-12-31&busFeature=WiFi&sortBy=price_asc
-        // sortBy options: departure_time, available_seats, price_asc, price_desc (default: departure date desc)
         [HttpGet("filters")]
         public async Task<ActionResult<IEnumerable<TripDto>>> Filters([FromQuery] string? originCityName,[FromQuery] string? destinationCityName,[FromQuery] DateTime? departureDate,[FromQuery] string? busFeature,[FromQuery] string? sortBy)
         {
@@ -55,7 +50,6 @@ namespace Bus_ticketing_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateTripDto dto)
         {
-            // Optional: Add validation here to check if Bus is free at this time
 
             var trip = new Trip
             {
@@ -71,7 +65,6 @@ namespace Bus_ticketing_Backend.Controllers
 
             await _repository.AddTripAsync(trip);
 
-            // Fix: Return the mapped DTO, not null
             return CreatedAtAction(nameof(GetById), new { id = trip.TripId }, MapToDto(trip));
         }
 
@@ -102,7 +95,6 @@ namespace Bus_ticketing_Backend.Controllers
             return NoContent();
         }
 
-        // Helper: Maps Entity to Rich DTO
         private static TripDto MapToDto(Trip t)
         {
             return new TripDto
