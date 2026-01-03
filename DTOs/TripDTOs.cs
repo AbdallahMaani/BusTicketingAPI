@@ -12,6 +12,9 @@ namespace Bus_ticketing_Backend.DTOs
         public int AvailableSeats { get; set; }
         public decimal PriceJod { get; set; }
         public string Status { get; set; }
+        public string OriginName { get; set; }     
+        public string DestinationName { get; set; } 
+        public string BusType { get; set; }
     }
 
     public class CreateTripDto

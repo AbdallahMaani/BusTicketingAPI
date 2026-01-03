@@ -9,6 +9,7 @@ namespace Bus_ticketing_Backend.IRepositories
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task AddUserAsync(User user);
         Task UpdateUserAsync(User user);
+        Task<bool> AddBalanceAsync(Guid userId, decimal amount);
         Task DeleteUserAsync(Guid userId);
     }
 }

@@ -8,6 +8,8 @@ namespace Bus_ticketing_Backend.IRepositories
         Task<IEnumerable<Trip>> GetAllTripsAsync();
         Task AddTripAsync(Trip trip);
         Task UpdateTripAsync(Trip trip);
-        Task DeleteTripAsync(Guid tripId);
+        Task<IEnumerable<Trip>> SearchTripsAsync(string originCityId, string destinationCityId, DateTime? date);
+        Task<IEnumerable<Trip>> FilterTripsAsync(string? originCityName,string? destinationCityName,DateTime? departureDate,string? busFeature,string? sortBy);
+        Task<bool> DeleteTripAsync(Guid tripId);
     }
 }

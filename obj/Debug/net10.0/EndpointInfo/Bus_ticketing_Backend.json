@@ -71,17 +71,55 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Booking"
+                  "$ref": "#/components/schemas/BookingDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Booking"
+                  "$ref": "#/components/schemas/BookingDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Booking"
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Booking/my-bookings": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
                 }
               }
             }
@@ -128,46 +166,6 @@
           }
         }
       },
-      "put": {
-        "tags": [
-          "Booking"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateBookingDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateBookingDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateBookingDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
       "delete": {
         "tags": [
           "Booking"
@@ -182,18 +180,6 @@
               "format": "uuid"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Booking/my-bookings": {
-      "get": {
-        "tags": [
-          "Booking"
         ],
         "responses": {
           "200": {
@@ -693,6 +679,144 @@
         }
       }
     },
+    "/api/Trip/search": {
+      "get": {
+        "tags": [
+          "Trip"
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Trip/filters": {
+      "get": {
+        "tags": [
+          "Trip"
+        ],
+        "parameters": [
+          {
+            "name": "originCityName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationCityName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departureDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "busFeature",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Trip": {
       "get": {
         "tags": [
@@ -899,6 +1023,35 @@
         }
       }
     },
+    "/api/User/me": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTOs"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTOs"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTOs"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/User/{id}": {
       "get": {
         "tags": [
@@ -993,6 +1146,40 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/User/topup": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "number",
+                "format": "double"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "number",
+                "format": "double"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1143,78 +1330,10 @@
           }
         }
       }
-    },
-    "/api/User/authenticated-only": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/User/admin-only": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
-      "Booking": {
-        "required": [
-          "tripId",
-          "userId"
-        ],
-        "type": "object",
-        "properties": {
-          "bookingId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "userId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          },
-          "tripId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "trip": {
-            "$ref": "#/components/schemas/Trip"
-          },
-          "bookingDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "bookingStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "priceTotal": {
-            "type": "number",
-            "format": "double"
-          },
-          "quantity": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
       "BookingDto": {
         "type": "object",
         "properties": {
@@ -1230,11 +1349,17 @@
             "type": "string",
             "format": "uuid"
           },
-          "trip": {
-            "$ref": "#/components/schemas/TripDto"
+          "originName": {
+            "type": "string",
+            "nullable": true
           },
-          "bus": {
-            "$ref": "#/components/schemas/BusDto"
+          "destinationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "busType": {
+            "type": "string",
+            "nullable": true
           },
           "bookingDate": {
             "type": "string",
@@ -1251,44 +1376,6 @@
           "quantity": {
             "type": "integer",
             "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Bus": {
-        "type": "object",
-        "properties": {
-          "busId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "operator": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "capacity": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "model": {
-            "type": "string",
-            "nullable": true
-          },
-          "modelYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "driverName": {
-            "type": "string",
-            "nullable": true
-          },
-          "features": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1586,42 +1673,6 @@
         },
         "additionalProperties": false
       },
-      "Routes": {
-        "required": [
-          "destinationId",
-          "originId"
-        ],
-        "type": "object",
-        "properties": {
-          "routeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "originId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "origin": {
-            "$ref": "#/components/schemas/City"
-          },
-          "destinationId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "destination": {
-            "$ref": "#/components/schemas/City"
-          },
-          "distanceKm": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "durationHrs": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
       "Station": {
         "required": [
           "cityId"
@@ -1714,54 +1765,6 @@
         },
         "additionalProperties": false
       },
-      "Trip": {
-        "required": [
-          "busId",
-          "routeId"
-        ],
-        "type": "object",
-        "properties": {
-          "tripId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "routeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "route": {
-            "$ref": "#/components/schemas/Routes"
-          },
-          "busId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "bus": {
-            "$ref": "#/components/schemas/Bus"
-          },
-          "departureDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "departureTime": {
-            "type": "string",
-            "format": "time"
-          },
-          "availableSeats": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "priceJod": {
-            "type": "number",
-            "format": "double"
-          },
-          "tripStatus": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "TripDto": {
         "type": "object",
         "properties": {
@@ -1796,24 +1799,18 @@
           "status": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateBookingDto": {
-        "type": "object",
-        "properties": {
-          "bookingStatus": {
+          },
+          "originName": {
             "type": "string",
             "nullable": true
           },
-          "priceTotal": {
-            "type": "number",
-            "format": "double"
+          "destinationName": {
+            "type": "string",
+            "nullable": true
           },
-          "quantity": {
-            "type": "integer",
-            "format": "int32"
+          "busType": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1931,53 +1928,6 @@
           },
           "password": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "passwordHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          },
-          "balance": {
-            "type": "number",
-            "format": "double"
-          },
-          "refreshToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "refreshTokenExpiryTime": {
-            "type": "string",
-            "format": "date-time",
             "nullable": true
           }
         },
