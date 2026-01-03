@@ -38,7 +38,6 @@ namespace Bus_ticketing_Backend.Services
                 Balance = 0
             };
 
-            // Hash Password
             user.PasswordHash = new PasswordHasher<User>()
                 .HashPassword(user, dto.Password);
 
@@ -46,7 +45,6 @@ namespace Bus_ticketing_Backend.Services
             return user;
         }
 
-        // 2. Login Logic
         public async Task<TokenResponseDto?> LoginAsync(LoginDto dto)
         {
             var user = await _repo.GetByUsernameAsync(dto.Username);

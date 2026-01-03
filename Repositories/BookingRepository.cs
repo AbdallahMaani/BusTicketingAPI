@@ -25,7 +25,7 @@ namespace Bus_ticketing_Backend.Repositories
                     .ThenInclude(t => t.Route)
                         .ThenInclude(r => r.Destination)
                 .Include(b => b.Trip)
-                    .ThenInclude(t => t.Bus)
+                    .ThenInclude(t => t.Bus).AsNoTracking()
                 .ToListAsync();
         }
 

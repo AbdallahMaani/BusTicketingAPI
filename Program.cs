@@ -10,13 +10,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ================= DATABASE =================
+// DATABASE 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// ================= DEPENDENCY INJECTION =================
+
+// DEPENDENCY INJECTION
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
@@ -28,7 +28,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 
-// ================= JWT AUTH =================
+//  JWT AUTH 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
@@ -48,7 +48,7 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
-// ================= CORS =================
+//  CORS 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
@@ -60,7 +60,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ================= SWAGGER + JWT =================
+// SWAGGER + JWT 
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -90,10 +90,10 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-// ================= BUILD =================
+//  BUILD 
 var app = builder.Build();
 
-// ================= MIDDLEWARE =================
+//  MIDDLEWARE 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -103,7 +103,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
 
-app.UseAuthentication(); //  MUST BE BEFORE Authorization
+app.UseAuthentication(); //  UseAuthentication BEFORE UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();

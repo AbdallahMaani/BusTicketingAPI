@@ -24,7 +24,7 @@ namespace Bus_ticketing_Backend.Repositories
 
         public async Task<IEnumerable<Routes>> GetAllRoutesAsync()
         {
-            return await _context.Routes.ToListAsync();
+            return await _context.Routes.AsNoTracking().ToListAsync();
         }
     }
 }

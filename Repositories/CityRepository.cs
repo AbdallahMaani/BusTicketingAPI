@@ -16,6 +16,6 @@ namespace Bus_ticketing_Backend.Repositories
         }
 
         public async Task<IEnumerable<City>> GetAllCitiesAsync() =>
-            await _context.Cities.ToListAsync();
+            await _context.Cities.AsNoTracking().ToListAsync();
     }
 }

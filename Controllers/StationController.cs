@@ -3,7 +3,6 @@ using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketingAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace Bus_ticketing_Backend.Controllers
 {
@@ -18,17 +17,7 @@ namespace Bus_ticketing_Backend.Controllers
         public async Task<ActionResult<IEnumerable<StationDto>>> GetAll()
         {
             var items = await _repository.GetAllStationsAsync();
-            var result = items.Select(s => new StationDto
-            {
-                Id = s.Id,
-                CityId = s.CityId,
-                NameEn = s.NameEn,
-                StationName = s.StationName,
-                StreetEn = s.StreetEn,
-                Lat = s.Lat,
-                Lng = s.Lng
-            });
-            return Ok(result);
+            return Ok(items.Select(MapToDto));
         }
 
         [HttpGet("{id:Guid}")]
@@ -36,19 +25,7 @@ namespace Bus_ticketing_Backend.Controllers
         {
             var item = await _repository.GetStationByIdAsync(id);
             if (item == null) return NotFound();
-
-            var dto = new StationDto
-            {
-                Id = item.Id,
-                CityId = item.CityId,
-                NameEn = item.NameEn,
-                StationName = item.StationName,
-                StreetEn = item.StreetEn,
-                Lat = item.Lat,
-                Lng = item.Lng
-            };
-
-            return Ok(dto);
+            return Ok(MapToDto(item));
         }
 
         [Authorize(Roles = "Admin")]
@@ -66,7 +43,8 @@ namespace Bus_ticketing_Backend.Controllers
             };
 
             await _repository.AddStationAsync(station);
-            return CreatedAtAction(nameof(GetById), new { id = station.Id }, null);
+            // Return mapped object
+            return CreatedAtAction(nameof(GetById), new { id = station.Id }, MapToDto(station));
         }
 
         [Authorize(Roles = "Admin")]
@@ -92,6 +70,21 @@ namespace Bus_ticketing_Backend.Controllers
         {
             await _repository.DeleteStationAsync(id);
             return NoContent();
+        }
+
+        // --- HELPER METHOD ---
+        private static StationDto MapToDto(Station s)
+        {
+            return new StationDto
+            {
+                Id = s.Id,
+                CityId = s.CityId,
+                NameEn = s.NameEn,
+                StationName = s.StationName,
+                StreetEn = s.StreetEn,
+                Lat = s.Lat,
+                Lng = s.Lng
+            };
         }
     }
 }

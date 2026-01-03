@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using Bus_ticketing_Backend.DTOs;
+﻿using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
+using Bus_ticketingAPI.Entities; // Ensure you have this namespace for the entity class
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bus_ticketing_Backend.Controllers
@@ -16,15 +16,7 @@ namespace Bus_ticketing_Backend.Controllers
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetAll()
         {
             var items = await _repository.GetAllRoutesAsync();
-            var result = items.Select(r => new RouteDto
-            {
-                RouteId = r.RouteId,
-                OriginId = r.OriginId,
-                DestinationId = r.DestinationId,
-                DistanceKm = r.DistanceKm,
-                DurationHrs = r.DurationHrs
-            });
-            return Ok(result);
+            return Ok(items.Select(MapToDto));
         }
 
         [HttpGet("{id:Guid}")]
@@ -32,17 +24,19 @@ namespace Bus_ticketing_Backend.Controllers
         {
             var item = await _repository.GetRouteByIdAsync(id);
             if (item == null) return NotFound();
+            return Ok(MapToDto(item));
+        }
 
-            var dto = new RouteDto
+        private static RouteDto MapToDto(Routes r)
+        {
+            return new RouteDto
             {
-                RouteId = item.RouteId,
-                OriginId = item.OriginId,
-                DestinationId = item.DestinationId,
-                DistanceKm = item.DistanceKm,
-                DurationHrs = item.DurationHrs
+                RouteId = r.RouteId,
+                OriginId = r.OriginId,
+                DestinationId = r.DestinationId,
+                DistanceKm = r.DistanceKm,
+                DurationHrs = r.DurationHrs
             };
-
-            return Ok(dto);
         }
     }
 }

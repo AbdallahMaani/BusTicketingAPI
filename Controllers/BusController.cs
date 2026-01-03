@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Bus_ticketing_Backend.DTOs;
+﻿using Bus_ticketing_Backend.DTOs;
 using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketingAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -18,18 +17,7 @@ namespace Bus_ticketing_Backend.Controllers
         public async Task<ActionResult<IEnumerable<BusDto>>> GetAll()
         {
             var items = await _repository.GetAllBusesAsync();
-            var result = items.Select(b => new BusDto
-            {
-                BusId = b.BusId,
-                Operator = b.Operator,
-                Type = b.Type,
-                Capacity = b.Capacity,
-                Model = b.Model,
-                ModelYear = b.ModelYear,
-                DriverName = b.DriverName,
-                Features = b.Features
-            });
-            return Ok(result);
+            return Ok(items.Select(MapToDto));
         }
 
         [HttpGet("{id:Guid}")]
@@ -37,20 +25,7 @@ namespace Bus_ticketing_Backend.Controllers
         {
             var item = await _repository.GetBusByIdAsync(id);
             if (item == null) return NotFound();
-
-            var dto = new BusDto
-            {
-                BusId = item.BusId,
-                Operator = item.Operator,
-                Type = item.Type,
-                Capacity = item.Capacity,
-                Model = item.Model,
-                ModelYear = item.ModelYear,
-                DriverName = item.DriverName,
-                Features = item.Features
-            };
-
-            return Ok(dto);
+            return Ok(MapToDto(item));
         }
 
         [Authorize(Roles = "Admin")]
@@ -69,7 +44,9 @@ namespace Bus_ticketing_Backend.Controllers
             };
 
             await _repository.AddBusAsync(bus);
-            return CreatedAtAction(nameof(GetById), new { id = bus.BusId }, null);
+
+            // Fix: Return the mapped object so the admin sees what was created immediately
+            return CreatedAtAction(nameof(GetById), new { id = bus.BusId }, MapToDto(bus));
         }
 
         [Authorize(Roles = "Admin")]
@@ -97,6 +74,21 @@ namespace Bus_ticketing_Backend.Controllers
         {
             await _repository.DeleteBusAsync(id);
             return NoContent();
+        }
+
+        private static BusDto MapToDto(Bus b)
+        {
+            return new BusDto
+            {
+                BusId = b.BusId,
+                Operator = b.Operator,
+                Type = b.Type,
+                Capacity = b.Capacity,
+                Model = b.Model,
+                ModelYear = b.ModelYear,
+                DriverName = b.DriverName,
+                Features = b.Features
+            };
         }
     }
 }

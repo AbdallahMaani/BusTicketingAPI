@@ -10,8 +10,10 @@ namespace Bus_ticketing_Backend.Repositories
         private readonly AppDbContext _context;
         public UserRepository(AppDbContext context) => _context = context;
 
-        // Use AsNoTracking for read-only lists to improve speed
-        public async Task<IEnumerable<User>> GetAllUsersAsync() =>
+        // Use AsNoTracking for read-only lists to improve speed . 
+        //We use AsNoTracking() because you're not editing them in that moment.
+
+        public async Task<IEnumerable<User>> GetAllUsersAsync() => 
             await _context.Users.AsNoTracking().ToListAsync();
 
         public async Task<User?> GetUserByIdAsync(Guid userId) =>
@@ -21,7 +23,7 @@ namespace Bus_ticketing_Backend.Repositories
             await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
         public async Task AddUserAsync(User user)
-        {
+       {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
@@ -32,7 +34,6 @@ namespace Bus_ticketing_Backend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // NEW: Safe method to specifically handle money
         public async Task<bool> AddBalanceAsync(Guid userId, decimal amount)
         {
             var user = await _context.Users.FindAsync(userId);

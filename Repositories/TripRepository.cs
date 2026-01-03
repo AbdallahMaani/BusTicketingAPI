@@ -29,11 +29,10 @@ namespace Bus_ticketing_Backend.Repositories
             return await _context.Trips
                 .Include(t => t.Route).ThenInclude(r => r.Origin)
                 .Include(t => t.Route).ThenInclude(r => r.Destination)
-                .OrderByDescending(t => t.DepartureDate)
+                .OrderByDescending(t => t.DepartureDate).AsNoTracking()
                 .ToListAsync();
         }
 
-        // NEW: Search Logic
         public async Task<IEnumerable<Trip>> SearchTripsAsync(string originId, string destId, DateTime? date)
         {
             var query = _context.Trips
@@ -93,7 +92,6 @@ namespace Bus_ticketing_Backend.Repositories
             return true;
         }
 
-        // NEW: Advanced Filter Logic (by bus features and sorting)
         public async Task<IEnumerable<Trip>> FilterTripsAsync(string? originCityName,string? destinationCityName,DateTime? departureDate,string? busFeature,string? sortBy)
         {
             var query = _context.Trips
