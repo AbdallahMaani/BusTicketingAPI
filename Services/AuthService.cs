@@ -149,15 +149,6 @@ namespace Bus_ticketing_Backend.Services
             return user;
         }
 
-        public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenDto request)
-        {
-            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
-            if (user == null)
-                return null;
-
-            return await CreateTokenResponse(user);
-        }
-
         private async Task<TokenResponseDto> CreateTokenResponse(User user)
         {
             return new TokenResponseDto
@@ -167,5 +158,14 @@ namespace Bus_ticketing_Backend.Services
             };
         }
 
+        public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenDto request)
+        {
+            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+            if (user == null)
+                return null;
+
+            return await CreateTokenResponse(user);
+        }
+        
     }
 }
