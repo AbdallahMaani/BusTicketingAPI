@@ -12,10 +12,17 @@ namespace Bus_ticketing_Backend.Repositories
 
         public async Task<City> GetCityByIdAsync(string cityId)
         {
-            return await _context.Cities.FindAsync(cityId);
+            return await _context.Cities
+                .Include(c => c.busStations) 
+                .FirstOrDefaultAsync(c => c.Id == cityId);
         }
 
-        public async Task<IEnumerable<City>> GetAllCitiesAsync() =>
-            await _context.Cities.AsNoTracking().ToListAsync();
+        public async Task<IEnumerable<City>> GetAllCitiesAsync()
+        {
+            return await _context.Cities
+                .Include(c => c.busStations)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

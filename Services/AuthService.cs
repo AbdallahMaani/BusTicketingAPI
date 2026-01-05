@@ -12,24 +12,24 @@ namespace Bus_ticketing_Backend.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository _repo;
-        private readonly IConfiguration _config;
+        private readonly IUserRepository _userReposiotry;
+        private readonly IConfiguration _config; // what is IConfiguration? it's used to access configuration settings in .NET applications.
 
         public AuthService(IUserRepository repo, IConfiguration config)
         {
-            _repo = repo;
+            _userReposiotry = repo;
             _config = config;
         }
 
         public async Task<User?> RegisterAsync(RegisterDto dto)
         {
-            var existingUser = await _repo.GetByUsernameAsync(dto.Username); 
-            if (existingUser != null)
+            var existingUser = await _userReposiotry.GetByUsernameAsync(dto.Username); 
+            if (existingUser != null) // If the username is already used return null
                 return null;
 
             var user = new User
             {
-                UserId = Guid.NewGuid(), // Ensure ID is generated
+                UserId = Guid.NewGuid(), 
                 Username = dto.Username,
                 FullName = dto.FullName,
                 Email = dto.Email,
@@ -41,13 +41,13 @@ namespace Bus_ticketing_Backend.Services
             user.PasswordHash = new PasswordHasher<User>()
                 .HashPassword(user, dto.Password);
 
-            await _repo.AddUserAsync(user);
+            await _userReposiotry.AddUserAsync(user);
             return user;
         }
 
         public async Task<TokenResponseDto?> LoginAsync(LoginDto dto)
         {
-            var user = await _repo.GetByUsernameAsync(dto.Username);
+            var user = await _userReposiotry.GetByUsernameAsync(dto.Username);
             if (user == null) return null;
 
             var result = new PasswordHasher<User>()
@@ -59,42 +59,43 @@ namespace Bus_ticketing_Backend.Services
             return await CreateTokenResponse(user);
         }
 
-        // 3. Refresh Token Logic (NEW)
-        public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenDto request)
+        public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordDto request)
         {
-            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+            
+            if (string.IsNullOrWhiteSpace(request.OldPassword) || string.IsNullOrWhiteSpace(request.NewPassword))
+                return false;
+
+            var user = await _userReposiotry.GetUserByIdAsync(userId);
             if (user == null)
-                return null;
+                return false;
 
-            return await CreateTokenResponse(user);
+            var passwordHasher = new PasswordHasher<User>();
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword);
+
+            if (result == PasswordVerificationResult.Failed)
+                return false;  
+
+            user.PasswordHash = passwordHasher.HashPassword(user, request.NewPassword);
+            await _userReposiotry.UpdateUserAsync(user);
+
+            return true;  
         }
 
-        // Helper: Validate Refresh Token
-        private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
+        public async Task<bool> ForceResetPasswordAsync(Guid userId, string newPassword)
         {
-            var user = await _repo.GetUserByIdAsync(userId);
+            var user = await _userReposiotry.GetUserByIdAsync(userId);
+            if (user == null) return false;
 
-            if (user == null ||
-                user.RefreshToken != refreshToken ||
-                user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-            {
-                return null;
-            }
+            // No Old Password check needed for Admin
 
-            return user;
+            var passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
+
+            await _userReposiotry.UpdateUserAsync(user);
+
+            return true;
         }
 
-        // Helper: Create Access + Refresh Tokens
-        private async Task<TokenResponseDto> CreateTokenResponse(User user)
-        {
-            return new TokenResponseDto
-            {
-                AccessToken = CreateJwt(user),
-                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
-            };
-        }
-
-        // Helper: Generate JWT
         private string CreateJwt(User user)
         {
             var claims = new List<Claim>
@@ -120,7 +121,6 @@ namespace Bus_ticketing_Backend.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // Helper: Generate & Save Refresh Token
         private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
         {
             var randomNumber = new byte[32];
@@ -131,8 +131,41 @@ namespace Bus_ticketing_Backend.Services
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); 
 
-            await _repo.UpdateUserAsync(user); // Save to DB via Repo
+            await _userReposiotry.UpdateUserAsync(user); 
             return refreshToken;
         }
+
+        private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
+        {
+            var user = await _userReposiotry.GetUserByIdAsync(userId);
+
+            if (user == null ||
+                user.RefreshToken != refreshToken ||
+                user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return null;
+            }
+
+            return user;
+        }
+
+        public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenDto request)
+        {
+            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+            if (user == null)
+                return null;
+
+            return await CreateTokenResponse(user);
+        }
+
+        private async Task<TokenResponseDto> CreateTokenResponse(User user)
+        {
+            return new TokenResponseDto
+            {
+                AccessToken = CreateJwt(user),
+                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
+            };
+        }
+
     }
 }

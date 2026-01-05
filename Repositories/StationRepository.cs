@@ -10,11 +10,20 @@ namespace Bus_ticketing_Backend.Repositories
         private readonly AppDbContext _context;
         public StationRepository(AppDbContext context) => _context = context;
 
-        public async Task<Station> GetStationByIdAsync(Guid stationId) =>
-            await _context.Stations.FindAsync(stationId);
+        public async Task<Station> GetStationByIdAsync(Guid stationId)
+        {
+            return await _context.Stations
+                .Include(s => s.City) 
+                .FirstOrDefaultAsync(s => s.Id == stationId);
+        }
 
-        public async Task<IEnumerable<Station>> GetAllStationsAsync() =>
-            await _context.Stations.ToListAsync();
+        public async Task<IEnumerable<Station>> GetAllStationsAsync()
+        {
+            return await _context.Stations
+                .Include(s => s.City) 
+                .AsNoTracking()
+                .ToListAsync();
+        }
 
         public async Task AddStationAsync(Station station)
         {

@@ -216,7 +216,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Bus_ticketingAPI.Entities.City, Bus_ticketing_Backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Bus_ticketing_Backend.DTOs.CityDto, Bus_ticketing_Backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -242,7 +242,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Bus_ticketingAPI.Entities.City",
+        "Type": "Bus_ticketing_Backend.DTOs.CityDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -656,6 +656,43 @@
       {
         "Name": "id",
         "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Bus_ticketing_Backend.Controllers.UserController",
+    "Method": "AdminResetPassword",
+    "RelativePath": "api/User/{id}/reset-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Bus_ticketing_Backend.DTOs.AdminResetPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Bus_ticketing_Backend.Controllers.UserController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/User/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Bus_ticketing_Backend.DTOs.ChangePasswordDto",
         "IsRequired": true
       }
     ],

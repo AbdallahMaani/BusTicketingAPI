@@ -19,11 +19,10 @@ namespace Bus_ticketing_Backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Always call base first to ensure default behaviors are set
+            //  call base first to ensure default behaviors are set
             base.OnModelCreating(modelBuilder);
 
-            // 1. Converters for DateOnly / TimeOnly 
-            // We define these as static to ensure the comparison doesn't fail during migration checks
+            // Converters for DateOnly / TimeOnly 
             var dateOnlyConverter = new ValueConverter<DateOnly, DateTime>(
                 d => d.ToDateTime(TimeOnly.MinValue),
                 dt => DateOnly.FromDateTime(dt));
@@ -32,7 +31,7 @@ namespace Bus_ticketing_Backend.Data
                 t => t.ToTimeSpan(),
                 ts => TimeOnly.FromTimeSpan(ts));
 
-            // 2. Entity Mappings
+            //  Entity Mappings
             modelBuilder.Entity<Trip>(entity =>
             {
                 entity.HasKey(e => e.TripId);
@@ -52,7 +51,6 @@ namespace Bus_ticketing_Backend.Data
             {
                 entity.HasKey(e => e.BookingId);
                 entity.Property(e => e.PriceTotal).HasColumnType("decimal(18,2)");
-                // Ensure DateTime is handled correctly for PostgreSQL
                 entity.Property(e => e.BookingDate).HasColumnType("timestamp with time zone");
             });
 

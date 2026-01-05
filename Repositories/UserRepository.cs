@@ -10,9 +10,6 @@ namespace Bus_ticketing_Backend.Repositories
         private readonly AppDbContext _context;
         public UserRepository(AppDbContext context) => _context = context;
 
-        // Use AsNoTracking for read-only lists to improve speed . 
-        //We use AsNoTracking() because you're not editing them in that moment.
-
         public async Task<IEnumerable<User>> GetAllUsersAsync() => 
             await _context.Users.AsNoTracking().ToListAsync();
 
@@ -55,3 +52,5 @@ namespace Bus_ticketing_Backend.Repositories
         }
     }
 }
+// Use AsNoTracking for read-only lists to improve speed . 
+//We use AsNoTracking() because you're not editing them in that moment.

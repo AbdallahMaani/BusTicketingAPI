@@ -5,13 +5,13 @@ namespace Bus_ticketing_Backend.DTOs
     public class BusDto
     {
         public Guid BusId { get; set; }
-        public string Operator { get; set; }
-        public string Type { get; set; }
+        public string Operator { get; set; } = string.Empty; 
+        public string Type { get; set; } = string.Empty;
         public int Capacity { get; set; }
-        public string Model { get; set; }
+        public string Model { get; set; } = string.Empty;
         public int ModelYear { get; set; }
-        public string DriverName { get; set; }
-        public string Features { get; set; }
+        public string DriverName { get; set; } = string.Empty;
+        public string Features { get; set; } = string.Empty;
     }
 
     public class CreateBusDto

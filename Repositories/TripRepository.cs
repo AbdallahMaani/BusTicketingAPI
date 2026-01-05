@@ -14,23 +14,20 @@ namespace Bus_ticketing_Backend.Repositories
         public async Task<Trip> GetTripByIdAsync(Guid tripId)
         {
             return await _context.Trips
-                .Include(t => t.Bus)
-                .Include(t => t.Route)
-                    .ThenInclude(r => r.Origin)
-                .Include(t => t.Route)
-                    .ThenInclude(r => r.Destination)
+                .Include(t => t.Bus) 
+                .Include(t => t.Route).ThenInclude(r => r.Origin)
+                .Include(t => t.Route).ThenInclude(r => r.Destination)
                 .FirstOrDefaultAsync(t => t.TripId == tripId);
         }
 
         public async Task<IEnumerable<Trip>> GetAllTripsAsync()
         {
-            // Only return active/scheduled trips to regular users usually
-            // But for Admin, we might want all. Here we fetch all with details.
             return await _context.Trips
+                .Include(t => t.Bus) 
                 .Include(t => t.Route).ThenInclude(r => r.Origin)
                 .Include(t => t.Route).ThenInclude(r => r.Destination)
-                .OrderByDescending(t => t.DepartureDate).AsNoTracking()
-                .ToListAsync();
+                .OrderByDescending(t => t.DepartureDate)
+                .AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<Trip>> SearchTripsAsync(string originId, string destId, DateTime? date)

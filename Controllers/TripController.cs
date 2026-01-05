@@ -101,11 +101,12 @@ namespace Bus_ticketing_Backend.Controllers
             {
                 TripId = t.TripId,
                 RouteId = t.RouteId,
-                // Null checks in case Includes weren't used or data is missing
                 OriginName = t.Route?.Origin?.NameEn ?? "Unknown",
                 DestinationName = t.Route?.Destination?.NameEn ?? "Unknown",
                 BusId = t.BusId,
                 BusType = t.Bus?.Type ?? "Standard",
+                driverName = t.Bus?.DriverName ?? "Unknown",  
+                Featuers = t.Bus?.Features ?? "Not Listed",
                 DepartureDate = t.DepartureDate,
                 DepartureTime = t.DepartureTime,
                 AvailableSeats = t.AvailableSeats,

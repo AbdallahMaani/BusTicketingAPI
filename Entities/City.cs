@@ -5,15 +5,15 @@ namespace Bus_ticketingAPI.Entities
     public class City
     {
         [Key]
-        public string Id { get; set; } // e.g., "LOC_AMN"
+        public string? Id { get; set; } // e.g., "LOC_AMN"
 
         [Required]
-        public string NameEn { get; set; }
+        public string? NameEn { get; set; }
 
         [Required]
-        public string NameAr { get; set; }
+        public string? NameAr { get; set; }
 
         // Navigation Property
-        public ICollection<Station> Areas { get; set; }
+        public ICollection<Station> busStations { get; set; } = new List<Station>();
     }
 }

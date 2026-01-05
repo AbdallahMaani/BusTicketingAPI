@@ -98,6 +98,9 @@ namespace Bus_ticketing_Backend.Controllers
 
             return Ok(new { message = "Booking cancelled and amount refunded." });
         }
+        // will be the booked trip deleted from the DB ? the answer is NO then why we used httpdelete ?
+        // Because we are following RESTful conventions where DELETE is used to indicate the removal of a resource.
+        // The booking status will be changed to "Cancelled" and the amount will be refunded to the user balance but the record will remain in the DB for history purpose.
 
         [Authorize]
         private Guid GetCurrentUserId()

@@ -369,7 +369,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/City"
+                    "$ref": "#/components/schemas/CityDto"
                   }
                 }
               },
@@ -377,7 +377,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/City"
+                    "$ref": "#/components/schemas/CityDto"
                   }
                 }
               },
@@ -385,7 +385,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/City"
+                    "$ref": "#/components/schemas/CityDto"
                   }
                 }
               }
@@ -415,17 +415,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/City"
+                  "$ref": "#/components/schemas/CityDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/City"
+                  "$ref": "#/components/schemas/CityDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/City"
+                  "$ref": "#/components/schemas/CityDto"
                 }
               }
             }
@@ -1330,10 +1330,93 @@
           }
         }
       }
+    },
+    "/api/User/change-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/User/{id}/reset-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminResetPasswordDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminResetPasswordDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AdminResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "newPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "BookingDto": {
         "type": "object",
         "properties": {
@@ -1418,11 +1501,21 @@
         },
         "additionalProperties": false
       },
-      "City": {
-        "required": [
-          "nameAr",
-          "nameEn"
-        ],
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "nullable": true
+          },
+          "newPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CityDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -1430,17 +1523,17 @@
             "nullable": true
           },
           "nameEn": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "nameAr": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
-          "areas": {
+          "busStations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Station"
+              "$ref": "#/components/schemas/StationDto"
             },
             "nullable": true
           }
@@ -1673,58 +1766,12 @@
         },
         "additionalProperties": false
       },
-      "Station": {
-        "required": [
-          "cityId"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "cityId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "city": {
-            "$ref": "#/components/schemas/City"
-          },
-          "nameEn": {
-            "type": "string",
-            "nullable": true
-          },
-          "stationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "streetEn": {
-            "type": "string",
-            "nullable": true
-          },
-          "lat": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "lng": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "StationDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
-          },
-          "cityId": {
-            "type": "string",
-            "nullable": true
           },
           "nameEn": {
             "type": "string",
@@ -1809,6 +1856,14 @@
             "nullable": true
           },
           "busType": {
+            "type": "string",
+            "nullable": true
+          },
+          "driverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "featuers": {
             "type": "string",
             "nullable": true
           }
@@ -1923,10 +1978,6 @@
             "nullable": true
           },
           "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
             "type": "string",
             "nullable": true
           }

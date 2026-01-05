@@ -3,7 +3,6 @@
     public class StationDto
     {
         public Guid Id { get; set; }
-        public string CityId { get; set; }
         public string NameEn { get; set; }
         public string StationName { get; set; }
         public string StreetEn { get; set; }

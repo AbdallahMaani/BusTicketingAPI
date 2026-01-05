@@ -72,13 +72,11 @@ namespace Bus_ticketing_Backend.Controllers
             return NoContent();
         }
 
-        // --- HELPER METHOD ---
         private static StationDto MapToDto(Station s)
         {
             return new StationDto
             {
                 Id = s.Id,
-                CityId = s.CityId,
                 NameEn = s.NameEn,
                 StationName = s.StationName,
                 StreetEn = s.StreetEn,

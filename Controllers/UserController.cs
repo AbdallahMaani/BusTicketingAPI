@@ -3,16 +3,15 @@ using Bus_ticketing_Backend.IRepositories;
 using Bus_ticketing_Backend.Services;
 using Bus_ticketingAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Bus_ticketing_Backend.Controllers
 {
-    [Route("api/[controller]")] // this line defines the base route for all endpoints in this controller.
-                                // [Controller] will be replaced by the controller's name minus the "Controller" suffix, so in this case, it becomes "api/user".
-    [ApiController] // This attribute indicates that the class is an API controller.
-    public class UserController : ControllerBase // Inherits from ControllerBase to provide basic functionalities for handling HTTP requests.
+    [Route("api/[controller]")]
+                                
+    [ApiController] 
+    public class UserController : ControllerBase 
     {
         private readonly IUserRepository _repository;
         private readonly IAuthService _authService;
@@ -47,13 +46,13 @@ namespace Bus_ticketing_Backend.Controllers
 
         [Authorize]
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<UserDTOs>> GetById([FromRoute] Guid id)
-            // ActionResult is a wrapper that lets you return different HTTP responses:
+        public async Task<ActionResult<UserDTOs>> GetById([FromRoute] Guid id) //Task means the method is asynchronous and will return a result in the future.
+                                                                               // ActionResult is a wrapper that lets you return different HTTP responses:
         {
             var user = await _repository.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
-            // Only Admin or the User themselves can view the full profile
+            // If you are NOT an Admin, AND you are trying to touch someone else's data, then STOP (Access Denied).
             var currentUserId = GetCurrentUserId();
             if (!User.IsInRole("Admin") && currentUserId != id)
             {
@@ -101,6 +100,7 @@ namespace Bus_ticketing_Backend.Controllers
             if (amount <= 0) return BadRequest("Amount must be greater than zero.");
 
             var userId = GetCurrentUserId();
+
             var success = await _repository.AddBalanceAsync(userId, amount);
 
             if (!success) return BadRequest("User not found.");
@@ -114,7 +114,7 @@ namespace Bus_ticketing_Backend.Controllers
             var user = await _authService.RegisterAsync(dto);
             if (user == null) return BadRequest("Username already exists.");
             return Ok(MapToDto(user)); 
-// Breaking it down: 1.MapToDto(user) - Convert User entity to UserDTOs 2.Ok(...) - Wrap it in an HTTP 200 OK response 3.  return -Send to frontend
+//  1.MapToDto(user) - Convert User entity to UserDTOs 2.Ok(...) - Wrap it in an HTTP 200 OK response 3.  return -Send to frontend
         }
 
         [HttpPost("login")]
@@ -149,6 +149,41 @@ namespace Bus_ticketing_Backend.Controllers
             Role = u.Role,
             Balance = u.Balance
         };
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            // Validate inputs
+            if (string.IsNullOrWhiteSpace(dto.OldPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
+                return BadRequest("Both old and new passwords are required.");
+
+            // Get current user ID from JWT token
+            var userId = GetCurrentUserId();
+            if (userId == Guid.Empty)
+                return Unauthorized();
+
+            // Call AuthService to change password
+            var success = await _authService.ChangePasswordAsync(userId, dto);
+
+            if (!success)
+                return BadRequest("Failed to change password. Old password may be incorrect.");
+
+            return Ok(new { message = "Password changed successfully." });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{id:Guid}/reset-password")]
+        public async Task<ActionResult> AdminResetPassword([FromRoute] Guid id, [FromBody] AdminResetPasswordDto dto)
+        {
+            // Admin doesn't need to know the old password
+            var result = await _authService.ForceResetPasswordAsync(id, dto.NewPassword);
+
+            if (!result)
+                return NotFound("User not found.");
+
+            return Ok(new { message = "Password has been reset by Admin." });
+        }
     }
 }
 
@@ -172,4 +207,10 @@ users = [User1, User2, User3]
         Select(MapToDto)
            ↓
 result = [UserDTO1, UserDTO2, UserDTO3]
+
+    [Route("api/[controller]")] this line defines the base route for all endpoints in this controller.
+                                 [Controller] will be replaced by the controller's name ,so in this case, it becomes "api/user".
+    [ApiController]  This attribute indicates that the class is an API controller.
+    public class UserController : ControllerBase  Inherits from ControllerBase to provide basic functionalities for handling HTTP requests.
+
 */

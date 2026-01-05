@@ -15,6 +15,8 @@ namespace Bus_ticketing_Backend.DTOs
         public string OriginName { get; set; }     
         public string DestinationName { get; set; } 
         public string BusType { get; set; }
+        public string driverName { get; set; }
+        public string Featuers { get; set; }
     }
 
     public class CreateTripDto
