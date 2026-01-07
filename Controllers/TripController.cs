@@ -101,18 +101,39 @@ namespace Bus_ticketing_Backend.Controllers
             {
                 TripId = t.TripId,
                 RouteId = t.RouteId,
-                OriginName = t.Route?.Origin?.NameEn ?? "Unknown",
-                DestinationName = t.Route?.Destination?.NameEn ?? "Unknown",
                 BusId = t.BusId,
-                BusType = t.Bus?.Type ?? "Standard",
-                driverName = t.Bus?.DriverName ?? "Unknown",  
-                Featuers = t.Bus?.Features ?? "Not Listed",
                 DepartureDate = t.DepartureDate,
                 DepartureTime = t.DepartureTime,
                 AvailableSeats = t.AvailableSeats,
                 PriceJod = t.PriceJod,
-                Status = t.tripStatus
+                Status = t.tripStatus,
+
+                // Route City Names
+                OriginName = t.Route?.Origin?.NameEn ?? "Unknown",
+                DestinationName = t.Route?.Destination?.NameEn ?? "Unknown",
+
+                // Bus Info
+                BusType = t.Bus?.Type ?? "Standard",
+                DriverName = t.Bus?.DriverName ?? "Unknown",
+                Features = t.Bus?.Features ?? "Not Listed",
+
+                // ORIGIN STATION (Departure)
+                OriginStationId = t.OriginStationId,
+                OriginStationName = t.OriginStation?.StationName ?? "Unknown",
+                OriginStationNameEn = t.OriginStation?.NameEn ?? "Unknown",
+                OriginStationStreet = t.OriginStation?.StreetEn ?? "Unknown",
+                OriginStationLat = t.OriginStation?.Lat,
+                OriginStationLng = t.OriginStation?.Lng,
+
+                // DESTINATION STATION (Arrival)
+                DestinationStationId = t.DestinationStationId,
+                DestinationStationName = t.DestinationStation?.StationName ?? "Unknown",
+                DestinationStationNameEn = t.DestinationStation?.NameEn ?? "Unknown",
+                DestinationStationStreet = t.DestinationStation?.StreetEn ?? "Unknown",
+                DestinationStationLat = t.DestinationStation?.Lat,
+                DestinationStationLng = t.DestinationStation?.Lng
             };
+
         }
     }
 }

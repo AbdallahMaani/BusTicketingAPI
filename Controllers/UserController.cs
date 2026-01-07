@@ -75,6 +75,7 @@ namespace Bus_ticketing_Backend.Controllers
 
             user.FullName = dto.FullName;
             user.Phone = dto.Phone;
+            user.Email = dto.Email;
             
             await _repository.UpdateUserAsync(user);
             return NoContent();

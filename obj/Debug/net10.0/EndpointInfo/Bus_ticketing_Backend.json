@@ -1650,6 +1650,8 @@
           "busId",
           "departureDate",
           "departureTime",
+          "destinationStationId",
+          "originStationId",
           "priceJod",
           "routeId"
         ],
@@ -1660,6 +1662,14 @@
             "format": "uuid"
           },
           "busId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originStationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "destinationStationId": {
             "type": "string",
             "format": "uuid"
           },
@@ -1863,8 +1873,60 @@
             "type": "string",
             "nullable": true
           },
-          "featuers": {
+          "features": {
             "type": "string",
+            "nullable": true
+          },
+          "originStationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originStationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "originStationNameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "originStationStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "originStationLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "originStationLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "destinationStationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "destinationStationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationStationNameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationStationStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationStationLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "destinationStationLng": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
@@ -1940,6 +2002,14 @@
             "format": "uuid"
           },
           "busId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originStationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "destinationStationId": {
             "type": "string",
             "format": "uuid"
           },

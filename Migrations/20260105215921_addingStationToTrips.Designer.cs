@@ -3,6 +3,7 @@ using System;
 using Bus_ticketing_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bus_ticketing_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105215921_addingStationToTrips")]
+    partial class addingStationToTrips
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -330,16 +333,13 @@ namespace Bus_ticketing_Backend.Migrations
                     b.Property<TimeSpan>("DepartureTime")
                         .HasColumnType("time");
 
-                    b.Property<Guid>("DestinationStationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OriginStationId")
-                        .HasColumnType("uuid");
-
                     b.Property<decimal>("PriceJod")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("RouteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StationId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("tripStatus")
@@ -349,11 +349,9 @@ namespace Bus_ticketing_Backend.Migrations
 
                     b.HasIndex("BusId");
 
-                    b.HasIndex("DestinationStationId");
-
-                    b.HasIndex("OriginStationId");
-
                     b.HasIndex("RouteId");
+
+                    b.HasIndex("StationId");
 
                     b.ToTable("Trips");
 
@@ -365,10 +363,9 @@ namespace Bus_ticketing_Backend.Migrations
                             BusId = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
                             DepartureDate = new DateTime(2025, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new TimeSpan(0, 8, 30, 0, 0),
-                            DestinationStationId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            OriginStationId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                             PriceJod = 2.50m,
                             RouteId = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                            StationId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                             tripStatus = "Scheduled"
                         },
                         new
@@ -378,10 +375,9 @@ namespace Bus_ticketing_Backend.Migrations
                             BusId = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
                             DepartureDate = new DateTime(2025, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new TimeSpan(0, 14, 0, 0, 0),
-                            DestinationStationId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            OriginStationId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                             PriceJod = 2.00m,
                             RouteId = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff"),
+                            StationId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                             tripStatus = "Scheduled"
                         });
                 });
@@ -487,31 +483,23 @@ namespace Bus_ticketing_Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Bus_ticketingAPI.Entities.Station", "DestinationStation")
-                        .WithMany()
-                        .HasForeignKey("DestinationStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Bus_ticketingAPI.Entities.Station", "OriginStation")
-                        .WithMany()
-                        .HasForeignKey("OriginStationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Bus_ticketingAPI.Entities.Routes", "Route")
                         .WithMany()
                         .HasForeignKey("RouteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Bus_ticketingAPI.Entities.Station", "Station")
+                        .WithMany()
+                        .HasForeignKey("StationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Bus");
 
-                    b.Navigation("DestinationStation");
-
-                    b.Navigation("OriginStation");
-
                     b.Navigation("Route");
+
+                    b.Navigation("Station");
                 });
 
             modelBuilder.Entity("Bus_ticketingAPI.Entities.City", b =>
