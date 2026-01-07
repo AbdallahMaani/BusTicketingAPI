@@ -40,7 +40,7 @@ namespace Bus_ticketing_Backend.Repositories
                         .ThenInclude(r => r.Destination)
                 .Include(b => b.Trip)
                     .ThenInclude(t => t.Bus)
-                .AsNoTracking() // this line means that the returned entities are not tracked by the context, which can improve performance for read-only operations.
+                .AsNoTracking()
                 .ToListAsync();
 
         public async Task<Booking?> GetBookingByIdAsync(Guid bookingId) =>
@@ -98,8 +98,6 @@ namespace Bus_ticketing_Backend.Repositories
 
                 await _context.Bookings.AddAsync(booking);
                 await _context.SaveChangesAsync();
-
-                
                 await transaction.CommitAsync(); // this line means that the changes made during the transaction are saved permanently to the database.
                 return booking;
             }

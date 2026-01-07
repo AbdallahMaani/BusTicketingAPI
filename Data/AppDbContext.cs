@@ -19,10 +19,9 @@ namespace Bus_ticketing_Backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //  call base first to ensure default behaviors are set
-            base.OnModelCreating(modelBuilder);
+            
+            base.OnModelCreating(modelBuilder); //  call base first to ensure default behaviors are set
 
-            // Converters for DateOnly / TimeOnly 
             var dateOnlyConverter = new ValueConverter<DateOnly, DateTime>(
                 d => d.ToDateTime(TimeOnly.MinValue),
                 dt => DateOnly.FromDateTime(dt));
@@ -31,13 +30,11 @@ namespace Bus_ticketing_Backend.Data
                 t => t.ToTimeSpan(),
                 ts => TimeOnly.FromTimeSpan(ts));
 
-            //  Entity Mappings
             modelBuilder.Entity<Trip>(entity =>
             {
                 entity.HasKey(e => e.TripId);
                 entity.Property(e => e.PriceJod).HasColumnType("decimal(18,2)");
                 
-                // Set converters explicitly
                 entity.Property(e => e.DepartureDate)
                       .HasConversion(dateOnlyConverter)
                       .HasColumnType("date");

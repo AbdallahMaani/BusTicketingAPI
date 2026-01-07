@@ -13,7 +13,8 @@ namespace Bus_ticketing_Backend.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userReposiotry;
-        private readonly IConfiguration _config; // what is IConfiguration? it's used to access configuration settings in .NET applications.
+        private readonly IConfiguration _config; 
+        // what is IConfiguration? it's used to access configuration settings in .NET applications.
 
         public AuthService(IUserRepository repo, IConfiguration config)
         {
@@ -59,41 +60,13 @@ namespace Bus_ticketing_Backend.Services
             return await CreateTokenResponse(user);
         }
 
-        public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordDto request)
+        private async Task<TokenResponseDto> CreateTokenResponse(User user)
         {
-            
-            if (string.IsNullOrWhiteSpace(request.OldPassword) || string.IsNullOrWhiteSpace(request.NewPassword))
-                return false;
-
-            var user = await _userReposiotry.GetUserByIdAsync(userId);
-            if (user == null)
-                return false;
-
-            var passwordHasher = new PasswordHasher<User>();
-            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword);
-
-            if (result == PasswordVerificationResult.Failed)
-                return false;  
-
-            user.PasswordHash = passwordHasher.HashPassword(user, request.NewPassword);
-            await _userReposiotry.UpdateUserAsync(user);
-
-            return true;  
-        }
-
-        public async Task<bool> ForceResetPasswordAsync(Guid userId, string newPassword)
-        {
-            var user = await _userReposiotry.GetUserByIdAsync(userId);
-            if (user == null) return false;
-
-            // No Old Password check needed for Admin
-
-            var passwordHasher = new PasswordHasher<User>();
-            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
-
-            await _userReposiotry.UpdateUserAsync(user);
-
-            return true;
+            return new TokenResponseDto
+            {
+                AccessToken = CreateJwt(user),
+                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
+            };
         }
 
         private string CreateJwt(User user)
@@ -135,6 +108,15 @@ namespace Bus_ticketing_Backend.Services
             return refreshToken;
         }
 
+        public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenDto request)
+        {
+            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+            if (user == null)
+                return null;
+
+            return await CreateTokenResponse(user);
+        }
+
         private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
             var user = await _userReposiotry.GetUserByIdAsync(userId);
@@ -149,23 +131,42 @@ namespace Bus_ticketing_Backend.Services
             return user;
         }
 
-        private async Task<TokenResponseDto> CreateTokenResponse(User user)
+        public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordDto request)
         {
-            return new TokenResponseDto
-            {
-                AccessToken = CreateJwt(user),
-                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
-            };
-        }
 
-        public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenDto request)
-        {
-            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+            if (string.IsNullOrWhiteSpace(request.OldPassword) || string.IsNullOrWhiteSpace(request.NewPassword))
+                return false;
+
+            var user = await _userReposiotry.GetUserByIdAsync(userId);
             if (user == null)
-                return null;
+                return false;
 
-            return await CreateTokenResponse(user);
+            var passwordHasher = new PasswordHasher<User>();
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword);
+
+            if (result == PasswordVerificationResult.Failed)
+                return false;
+
+            user.PasswordHash = passwordHasher.HashPassword(user, request.NewPassword);
+            await _userReposiotry.UpdateUserAsync(user);
+
+            return true;
         }
-        
+
+        public async Task<bool> ForceResetPasswordAsync(Guid userId, string newPassword)
+        {
+            var user = await _userReposiotry.GetUserByIdAsync(userId);
+            if (user == null) return false;
+
+            // No Old Password check needed for Admin
+
+            var passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
+
+            await _userReposiotry.UpdateUserAsync(user);
+
+            return true;
+        }
+
     }
 }

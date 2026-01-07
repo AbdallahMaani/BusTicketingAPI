@@ -13,12 +13,12 @@ namespace Bus_ticketing_Backend.Controllers
     [ApiController] 
     public class UserController : ControllerBase 
     {
-        private readonly IUserRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly IAuthService _authService;
 
         public UserController(IUserRepository repository, IAuthService authService)
         {
-            _repository = repository;
+            _userRepository = repository;
             _authService = authService;
         }
 
@@ -26,7 +26,7 @@ namespace Bus_ticketing_Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTOs>>> GetAll()
         {
-            var users = await _repository.GetAllUsersAsync();
+            var users = await _userRepository.GetAllUsersAsync();
             var result = users.Select(MapToDto); //select : Projects each element of a list into a new form.
             return Ok(result);
         }
@@ -38,7 +38,7 @@ namespace Bus_ticketing_Backend.Controllers
             var userId = GetCurrentUserId();
             if (userId == Guid.Empty) return Unauthorized();
 
-            var user = await _repository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null) return NotFound();
 
             return Ok(MapToDto(user)); //// 200 OK + user data Wrap it in an HTTP 200 OK response
@@ -49,7 +49,7 @@ namespace Bus_ticketing_Backend.Controllers
         public async Task<ActionResult<UserDTOs>> GetById([FromRoute] Guid id) //Task means the method is asynchronous and will return a result in the future.
                                                                                // ActionResult is a wrapper that lets you return different HTTP responses:
         {
-            var user = await _repository.GetUserByIdAsync(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
             // If you are NOT an Admin, AND you are trying to touch someone else's data, then STOP (Access Denied).
@@ -70,14 +70,14 @@ namespace Bus_ticketing_Backend.Controllers
             if (!User.IsInRole("Admin") && currentUserId != id)
                 return Forbid();
 
-            var user = await _repository.GetUserByIdAsync(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
             user.FullName = dto.FullName;
             user.Phone = dto.Phone;
             user.Email = dto.Email;
             
-            await _repository.UpdateUserAsync(user);
+            await _userRepository.UpdateUserAsync(user);
             return NoContent();
         }
 
@@ -89,7 +89,7 @@ namespace Bus_ticketing_Backend.Controllers
             if (!User.IsInRole("Admin") && currentUserId != id)
                 return Forbid();
 
-            await _repository.DeleteUserAsync(id);
+            await _userRepository.DeleteUserAsync(id);
             return NoContent();
         }
 
@@ -102,7 +102,7 @@ namespace Bus_ticketing_Backend.Controllers
 
             var userId = GetCurrentUserId();
 
-            var success = await _repository.AddBalanceAsync(userId, amount);
+            var success = await _userRepository.AddBalanceAsync(userId, amount);
 
             if (!success) return BadRequest("User not found.");
 
@@ -126,6 +126,7 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(result);
         }
 
+        // support refresh token rotation
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenDto request)
         {
@@ -134,6 +135,7 @@ namespace Bus_ticketing_Backend.Controllers
             return Ok(result);
         }
 
+        //Helper get Id from JWT
         private Guid GetCurrentUserId()
         {
             var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -155,16 +157,13 @@ namespace Bus_ticketing_Backend.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
-            // Validate inputs
             if (string.IsNullOrWhiteSpace(dto.OldPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
                 return BadRequest("Both old and new passwords are required.");
 
-            // Get current user ID from JWT token
             var userId = GetCurrentUserId();
             if (userId == Guid.Empty)
                 return Unauthorized();
 
-            // Call AuthService to change password
             var success = await _authService.ChangePasswordAsync(userId, dto);
 
             if (!success)
