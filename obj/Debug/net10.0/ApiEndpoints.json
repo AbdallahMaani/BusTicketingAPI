@@ -726,6 +726,16 @@
   },
   {
     "ContainingType": "Bus_ticketing_Backend.Controllers.UserController",
+    "Method": "Logout",
+    "RelativePath": "api/User/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Bus_ticketing_Backend.Controllers.UserController",
     "Method": "GetMyProfile",
     "RelativePath": "api/User/me",
     "HttpMethod": "GET",
@@ -751,13 +761,7 @@
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "Bus_ticketing_Backend.DTOs.RefreshTokenDto",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "Bus_ticketing_Backend.DTOs.TokenResponseDto",
@@ -786,7 +790,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Bus_ticketing_Backend.DTOs.UserDTOs",
+        "Type": "Bus_ticketing_Backend.DTOs.RegisterResultDto",
         "MediaTypes": [
           "text/plain",
           "application/json",

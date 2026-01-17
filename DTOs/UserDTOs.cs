@@ -24,11 +24,19 @@
         public string Phone { get; set; }
     }
 
+    public class RegisterResultDto
+    {
+        public bool Success { get; set; }
+        public string? ErrorMessage { get; set; }
+        public UserDTOs? User { get; set; }
+    }
+
     public class UpdateUserDTO 
     { 
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
+        public string Role { get; set; }
     }
 
     public class LoginDto
@@ -39,14 +47,23 @@
 
     public class RefreshTokenDto
     {
-        public Guid UserId { get; set; }
-        public string RefreshToken { get; set; }
+        // UserId and RefreshToken will come from the cookie
     }
 
     public class TokenResponseDto
     {
         public string AccessToken { get; set; }
-        public string RefreshToken { get; set; }
+        public AuthUserDto User { get; set; }
+    }
+
+    public class AuthUserDto
+    {
+        public Guid Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public string Role { get; set; }
+        public decimal Balance { get; set; }
     }
 
     public class ChangePasswordDto
@@ -55,8 +72,20 @@
         public string NewPassword { get; set; }
     }
 
+    public class ChangePasswordResultDto
+    {
+        public bool Success { get; set; }
+        public string? ErrorMessage { get; set; }
+    }
+
     public class AdminResetPasswordDto
     {
         public string NewPassword { get; set; }
+    }
+
+    public class AdminResetPasswordResultDto
+    {
+        public bool Success { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }

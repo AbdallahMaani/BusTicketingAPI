@@ -41,6 +41,20 @@ namespace Bus_ticketing_Backend.Repositories
             return true;
         }
 
+        public async Task InvalidateRefreshTokenAsync(string refreshToken)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+            if (user != null)
+            {
+                user.RefreshToken = null;
+                user.RefreshTokenExpiryTime = null;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
         public async Task DeleteUserAsync(Guid userId)
         {
             var user = await _context.Users.FindAsync(userId);
@@ -50,6 +64,15 @@ namespace Bus_ticketing_Backend.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u =>
+                    u.RefreshToken == refreshToken &&
+                    u.RefreshTokenExpiryTime > DateTime.UtcNow);
+        }
+
     }
 }
 // Use AsNoTracking for read-only lists to improve speed . 

@@ -52,7 +52,6 @@ namespace Bus_ticketing_Backend.Controllers
             var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
-            // If you are NOT an Admin, AND you are trying to touch someone else's data, then STOP (Access Denied).
             var currentUserId = GetCurrentUserId();
             if (!User.IsInRole("Admin") && currentUserId != id)
             {
@@ -76,7 +75,8 @@ namespace Bus_ticketing_Backend.Controllers
             user.FullName = dto.FullName;
             user.Phone = dto.Phone;
             user.Email = dto.Email;
-            
+            user.Role = dto.Role;
+
             await _userRepository.UpdateUserAsync(user);
             return NoContent();
         }
@@ -110,32 +110,64 @@ namespace Bus_ticketing_Backend.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDTOs>> Register(RegisterDto dto)
+        public async Task<ActionResult<RegisterResultDto>> Register(RegisterDto dto)
         {
-            var user = await _authService.RegisterAsync(dto);
-            if (user == null) return BadRequest("Username already exists.");
-            return Ok(MapToDto(user)); 
-//  1.MapToDto(user) - Convert User entity to UserDTOs 2.Ok(...) - Wrap it in an HTTP 200 OK response 3.  return -Send to frontend
+            var result = await _authService.RegisterAsync(dto);
+            
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseDto>> Login(LoginDto dto)
         {
-            var result = await _authService.LoginAsync(dto);
-            if (result == null) return BadRequest("Invalid username or password.");
-            return Ok(result);
+            var tokenResult = await _authService.LoginAsync(dto);
+            if (tokenResult == null)
+                return BadRequest("Invalid username or password.");
+
+            var user = await _userRepository.GetByUsernameAsync(dto.Username);
+            if (user == null)
+                return Unauthorized();
+
+            if (user.RefreshToken != null)
+            {
+                SetRefreshTokenCookie(user.RefreshToken);
+            }
+
+            return Ok(tokenResult);
         }
 
-        // support refresh token rotation
+
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenDto request)
+        public async Task<ActionResult<TokenResponseDto>> RefreshToken()
         {
-            var result = await _authService.RefreshTokensAsync(request);
-            if (result == null) return Unauthorized("Invalid token.");
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized("Refresh token not found.");
+
+            var result = await _authService.RefreshTokensAsync(refreshToken);
+            if (result == null)
+                return Unauthorized("Invalid or expired refresh token.");
+
             return Ok(result);
         }
 
-        //Helper get Id from JWT
+        // Helper method to set HTTP-only cookie
+        private void SetRefreshTokenCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
+
         private Guid GetCurrentUserId()
         {
             var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -157,17 +189,14 @@ namespace Bus_ticketing_Backend.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.OldPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
-                return BadRequest("Both old and new passwords are required.");
-
             var userId = GetCurrentUserId();
             if (userId == Guid.Empty)
                 return Unauthorized();
 
-            var success = await _authService.ChangePasswordAsync(userId, dto);
+            var result = await _authService.ChangePasswordAsync(userId, dto);
 
-            if (!success)
-                return BadRequest("Failed to change password. Old password may be incorrect.");
+            if (!result.Success)
+                return BadRequest(result);
 
             return Ok(new { message = "Password changed successfully." });
         }
@@ -176,13 +205,28 @@ namespace Bus_ticketing_Backend.Controllers
         [HttpPost("{id:Guid}/reset-password")]
         public async Task<ActionResult> AdminResetPassword([FromRoute] Guid id, [FromBody] AdminResetPasswordDto dto)
         {
-            // Admin doesn't need to know the old password
             var result = await _authService.ForceResetPasswordAsync(id, dto.NewPassword);
 
-            if (!result)
-                return NotFound("User not found.");
+            if (!result.Success)
+                return BadRequest(result);
 
             return Ok(new { message = "Password has been reset by Admin." });
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                await _userRepository.InvalidateRefreshTokenAsync(refreshToken);
+            }
+
+            Response.Cookies.Delete("refreshToken");
+
+            return Ok(new { message = "Logged out successfully." });
         }
     }
 }

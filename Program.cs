@@ -1,5 +1,6 @@
 ﻿using Bus_ticketing_Backend.Data;
 using Bus_ticketing_Backend.IRepositories;
+using Bus_ticketing_Backend.Middleware;
 using Bus_ticketing_Backend.Repositories;
 using Bus_ticketing_Backend.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IRoutesRepository, RoutesRepository>();
 builder.Services.AddScoped<IBusRepository, BusRepository>();
+builder.Services.AddLogging();  // Ensure logging is registered
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
@@ -51,12 +53,13 @@ builder.Services.AddAuthorization();
 //  CORS 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ReactPolicy", policy =>
+    options.AddPolicy("NextJsPolicy", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3000", "https://localhost:3000")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -100,11 +103,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors("ReactPolicy");
+// Add conditional HTTPS redirect
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseAuthentication(); //  UseAuthentication BEFORE UseAuthorization
+app.UseCors("NextJsPolicy"); // Must be BEFORE UseAuthentication
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 app.Run();
