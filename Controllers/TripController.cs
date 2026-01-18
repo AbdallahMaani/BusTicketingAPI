@@ -56,6 +56,8 @@ namespace Bus_ticketing_Backend.Controllers
                 TripId = Guid.NewGuid(),
                 RouteId = dto.RouteId,
                 BusId = dto.BusId,
+                OriginStationId = dto.OriginStationId,
+                DestinationStationId = dto.DestinationStationId,
                 DepartureDate = dto.DepartureDate,
                 DepartureTime = dto.DepartureTime,
                 AvailableSeats = dto.AvailableSeats,

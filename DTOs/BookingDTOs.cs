@@ -32,7 +32,6 @@ namespace Bus_ticketing_Backend.DTOs
 
     public class UpdateBookingDto
     {
-        public string? bookingStatus { get; set; }
         public decimal PriceTotal { get; set; }
         public int Quantity { get; set; }
     }

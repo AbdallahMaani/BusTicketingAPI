@@ -51,11 +51,36 @@ namespace Bus_ticketing_Backend.Controllers
 
             if (!isAdmin && item.UserId != userId)
             {
-                return Forbid(); 
+                return Forbid();
             }
 
             return Ok(MapToDto(item));
-        } 
+        }
+
+        [Authorize]
+        [HttpPut("{id:Guid}")]
+        public async Task<ActionResult> UpdateBooking([FromRoute] Guid id, [FromBody] UpdateBookingDto updateBookingDto)
+        {
+            var existing = await _repository.GetBookingByIdAsync(id);
+            if (existing == null) return NotFound();
+
+            var userId = GetCurrentUserId();
+            var isAdmin = User.IsInRole("Admin");
+
+            if (!isAdmin && existing.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            if (updateBookingDto.PriceTotal != 0)
+                existing.PriceTotal = updateBookingDto.PriceTotal;
+
+            if (updateBookingDto.Quantity != 0)
+                existing.Quantity = updateBookingDto.Quantity;
+
+            await _repository.UpdateBookingAsync(existing);
+            return NoContent();
+        }
 
         [Authorize]
         [HttpPost]

@@ -47,6 +47,7 @@ namespace Bus_ticketing_Backend.Controllers
                 NameAr = city.NameAr,
                 busStations = city.busStations.Select(s => new StationDto
                 {
+                    Id = s.Id,
                     NameEn = s.NameEn,
                     StationName = s.StationName,
                     StreetEn = s.StreetEn,

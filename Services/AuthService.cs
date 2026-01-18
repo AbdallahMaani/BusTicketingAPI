@@ -127,7 +127,7 @@ namespace Bus_ticketing_Backend.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(2),
+                expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: creds
             );
 

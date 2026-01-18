@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bus_ticketing_Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+794293bb91062827a7c153256f14670590ed6e63")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55188648b781c929647ac64f97daecb5ca530d26")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bus_ticketing_Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bus_ticketing_Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
