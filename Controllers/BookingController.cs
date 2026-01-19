@@ -58,28 +58,37 @@ namespace Bus_ticketing_Backend.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id:Guid}")]
-        public async Task<ActionResult> UpdateBooking([FromRoute] Guid id, [FromBody] UpdateBookingDto updateBookingDto)
+        [HttpPut("{id:Guid}/quantity")]
+        public async Task<ActionResult<BookingDto>> UpdateBookingQuantity([FromRoute] Guid id, [FromBody] UpdateBookingQuantityDto dto)
         {
-            var existing = await _repository.GetBookingByIdAsync(id);
-            if (existing == null) return NotFound();
-
             var userId = GetCurrentUserId();
             var isAdmin = User.IsInRole("Admin");
 
-            if (!isAdmin && existing.UserId != userId)
+            var updated = await _repository.UpdateBookingQuantityAsync(id, userId, isAdmin, dto.Quantity);
+
+            if (updated == null)
             {
-                return Forbid();
+                return BadRequest("Unable to update booking quantity. Ensure the booking is confirmed, you have sufficient balance, and the trip has available seats.");
             }
 
-            if (updateBookingDto.PriceTotal != 0)
-                existing.PriceTotal = updateBookingDto.PriceTotal;
+            return Ok(MapToDto(updated));
+        }
 
-            if (updateBookingDto.Quantity != 0)
-                existing.Quantity = updateBookingDto.Quantity;
+        [Authorize]
+        [HttpPut("{id:Guid}/status")]
+        public async Task<ActionResult<BookingDto>> UpdateBookingStatus([FromRoute] Guid id, [FromBody] UpdateBookingStatusDto dto)
+        {
+            var userId = GetCurrentUserId();
+            var isAdmin = User.IsInRole("Admin");
 
-            await _repository.UpdateBookingAsync(existing);
-            return NoContent();
+            var updated = await _repository.UpdateBookingStatusAsync(id, userId, isAdmin, dto.Status);
+
+            if (updated == null)
+            {
+                return BadRequest("Unable to update booking status. Ensure valid status transition or you have sufficient balance/seats.");
+            }
+
+            return Ok(MapToDto(updated));
         }
 
         [Authorize]
@@ -106,26 +115,6 @@ namespace Bus_ticketing_Backend.Controllers
                 return StatusCode(500, "Internal server error during booking.");
             }
         }
-
-        [Authorize]
-        [HttpDelete("{id:Guid}")]
-        public async Task<ActionResult> CancelBooking([FromRoute] Guid id)
-        {
-            var userId = GetCurrentUserId();
-            var isAdmin = User.IsInRole("Admin");
-
-            var success = await _repository.CancelBookingTransactionAsync(id, userId, isAdmin);
-
-            if (!success)
-            {
-                return BadRequest("Unable to cancel booking. It may be already cancelled, or you do not have permission.");
-            }
-
-            return Ok(new { message = "Booking cancelled and amount refunded." });
-        }
-        // will be the booked trip deleted from the DB ? the answer is NO then why we used httpdelete ?
-        // Because we are following RESTful conventions where DELETE is used to indicate the removal of a resource.
-        // The booking status will be changed to "Cancelled" and the amount will be refunded to the user balance but the record will remain in the DB for history purpose.
 
         [Authorize]
         private Guid GetCurrentUserId()

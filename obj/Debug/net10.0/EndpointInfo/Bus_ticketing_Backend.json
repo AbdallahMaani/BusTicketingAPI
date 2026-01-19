@@ -165,7 +165,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Booking/{id}/quantity": {
       "put": {
         "tags": [
           "Booking"
@@ -185,28 +187,47 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateBookingDto"
+                "$ref": "#/components/schemas/UpdateBookingQuantityDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateBookingDto"
+                "$ref": "#/components/schemas/UpdateBookingQuantityDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateBookingDto"
+                "$ref": "#/components/schemas/UpdateBookingQuantityDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              }
+            }
           }
         }
-      },
-      "delete": {
+      }
+    },
+    "/api/Booking/{id}/status": {
+      "put": {
         "tags": [
           "Booking"
         ],
@@ -221,9 +242,45 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingStatusDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingStatusDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingStatusDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1996,16 +2053,28 @@
         },
         "additionalProperties": false
       },
-      "UpdateBookingDto": {
+      "UpdateBookingQuantityDto": {
         "type": "object",
         "properties": {
-          "priceTotal": {
-            "type": "number",
-            "format": "double"
-          },
           "quantity": {
+            "maximum": 10,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateBookingStatusDto": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "minLength": 1,
+            "pattern": "^(Confirmed|Cancelled)$",
+            "type": "string"
           }
         },
         "additionalProperties": false

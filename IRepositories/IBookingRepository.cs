@@ -9,7 +9,7 @@ namespace Bus_ticketing_Backend.IRepositories
         Task<IEnumerable<Booking>> GetUserBookingsAsync(Guid userId);
         Task<Booking?> GetBookingByIdAsync(Guid bookingId);
         Task<Booking?> CreateBookingTransactionAsync(Guid userId, CreateBookingDto dto);
-        Task<bool> CancelBookingTransactionAsync(Guid bookingId, Guid userId, bool isAdmin);
-        Task UpdateBookingAsync(Booking booking);
+        Task<Booking?> UpdateBookingStatusAsync(Guid bookingId, Guid userId, bool isAdmin, string newStatus);
+        Task<Booking?> UpdateBookingQuantityAsync(Guid bookingId, Guid userId, bool isAdmin, int newQuantity);
     }
 }

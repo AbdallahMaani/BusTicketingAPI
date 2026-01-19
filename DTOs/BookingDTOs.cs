@@ -30,9 +30,16 @@ namespace Bus_ticketing_Backend.DTOs
         public int Quantity { get; set; }
     }
 
-    public class UpdateBookingDto
+    public class UpdateBookingQuantityDto
     {
-        public decimal PriceTotal { get; set; }
+        [Range(1, 10, ErrorMessage = "Quantity must be between 1 and 10")]
         public int Quantity { get; set; }
+    }
+
+    public class UpdateBookingStatusDto
+    {
+        [Required]
+        [RegularExpression("^(Confirmed|Cancelled)$", ErrorMessage = "Status must be either 'Confirmed' or 'Cancelled'")]
+        public string Status { get; set; }
     }
 }

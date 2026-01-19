@@ -73,8 +73,8 @@
   },
   {
     "ContainingType": "Bus_ticketing_Backend.Controllers.BookingController",
-    "Method": "UpdateBooking",
-    "RelativePath": "api/Booking/{id}",
+    "Method": "UpdateBookingQuantity",
+    "RelativePath": "api/Booking/{id}/quantity",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -85,18 +85,28 @@
         "IsRequired": true
       },
       {
-        "Name": "updateBookingDto",
-        "Type": "Bus_ticketing_Backend.DTOs.UpdateBookingDto",
+        "Name": "dto",
+        "Type": "Bus_ticketing_Backend.DTOs.UpdateBookingQuantityDto",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "Bus_ticketing_Backend.DTOs.BookingDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "Bus_ticketing_Backend.Controllers.BookingController",
-    "Method": "CancelBooking",
-    "RelativePath": "api/Booking/{id}",
-    "HttpMethod": "DELETE",
+    "Method": "UpdateBookingStatus",
+    "RelativePath": "api/Booking/{id}/status",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -104,9 +114,24 @@
         "Name": "id",
         "Type": "System.Guid",
         "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Bus_ticketing_Backend.DTOs.UpdateBookingStatusDto",
+        "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "Bus_ticketing_Backend.DTOs.BookingDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "Bus_ticketing_Backend.Controllers.BookingController",

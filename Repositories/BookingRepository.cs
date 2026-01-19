@@ -108,35 +108,49 @@ namespace Bus_ticketing_Backend.Repositories
             }
         }
 
-        public async Task<bool> CancelBookingTransactionAsync(Guid bookingId, Guid userId, bool isAdmin)
+        public async Task<Booking?> UpdateBookingStatusAsync(Guid bookingId, Guid userId, bool isAdmin, string newStatus)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var booking = await _context.Bookings.FindAsync(bookingId);
 
-                if (booking == null) return false;
-                if (!isAdmin && booking.UserId != userId) return false;
-                if (booking.bookingStatus == "Cancelled") return false;
+                if (booking == null) return null;
+                if (!isAdmin && booking.UserId != userId) return null;
+                if (booking.bookingStatus == newStatus) return booking; // Already in desired status
+
+                var validStatuses = new[] { "Confirmed", "Cancelled" };
+                if (!validStatuses.Contains(newStatus)) return null;
 
                 var user = await _context.Users.FindAsync(booking.UserId);
                 var trip = await _context.Trips.FindAsync(booking.TripId);
 
-                if (user != null)
-                {
-                    user.Balance += booking.PriceTotal;
-                }
+                if (user == null || trip == null) return null;
 
-                if (trip != null)
+                // Handle status transition
+                if (booking.bookingStatus == "Confirmed" && newStatus == "Cancelled")
                 {
+                    // Cancelling: refund user, return seats
+                    user.Balance += booking.PriceTotal;
                     trip.AvailableSeats += booking.Quantity;
                 }
+                else if (booking.bookingStatus == "Cancelled" && newStatus == "Confirmed")
+                {
+                    // Re-confirming: deduct from user, take seats
+                    if (user.Balance < booking.PriceTotal || trip.AvailableSeats < booking.Quantity)
+                        return null; // Insufficient balance or seats
 
-                booking.bookingStatus = "Cancelled"; //Soft Delete
+                    user.Balance -= booking.PriceTotal;
+                    trip.AvailableSeats -= booking.Quantity;
+                }
+
+                booking.bookingStatus = newStatus;
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return true;
+
+                // Reload booking with related entities
+                return await GetBookingByIdAsync(bookingId);
             }
             catch
             {
@@ -145,10 +159,64 @@ namespace Bus_ticketing_Backend.Repositories
             }
         }
 
-        public async Task UpdateBookingAsync(Booking booking)
+        public async Task<Booking?> UpdateBookingQuantityAsync(Guid bookingId, Guid userId, bool isAdmin, int newQuantity)
         {
-            _context.Bookings.Update(booking);
-            await _context.SaveChangesAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var booking = await _context.Bookings.FindAsync(bookingId);
+
+                if (booking == null) return null;
+                if (!isAdmin && booking.UserId != userId) return null;
+                if (booking.bookingStatus != "Confirmed") return null; // Can only update confirmed bookings
+                if (newQuantity < 1 || newQuantity > 10) return null; // Validate quantity
+
+                var user = await _context.Users.FindAsync(booking.UserId);
+                var trip = await _context.Trips.FindAsync(booking.TripId);
+
+                if (user == null || trip == null) return null;
+
+                var oldQuantity = booking.Quantity;
+                var quantityDifference = newQuantity - oldQuantity;
+                var oldPrice = booking.PriceTotal;
+                var newPrice = trip.PriceJod * newQuantity;
+                var priceDifference = newPrice - oldPrice;
+
+                // Check if user has sufficient balance and trip has sufficient seats
+                if (quantityDifference > 0)
+                {
+                    // Increasing quantity: need more seats and money
+                    if (trip.AvailableSeats < quantityDifference)
+                        return null; // Not enough seats
+
+                    if (user.Balance < priceDifference)
+                        return null; // Not enough balance
+
+                    trip.AvailableSeats -= quantityDifference;
+                    user.Balance -= priceDifference;
+                }
+                else if (quantityDifference < 0)
+                {
+                    // Decreasing quantity: refund seats and money
+                    trip.AvailableSeats -= quantityDifference; // Negative value, so adds seats
+                    user.Balance -= priceDifference; // Negative value, so adds balance
+                }
+
+                booking.Quantity = newQuantity;
+                booking.PriceTotal = newPrice;
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                // Reload booking with related entities
+                return await GetBookingByIdAsync(bookingId);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
+
     }
 }
